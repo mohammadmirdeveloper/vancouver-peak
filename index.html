@@ -51,5 +51,24 @@ function renderOrders(){const f=filterDate.value;const rows=getOrders().filter(o
 function clearOrders(){if(confirm("Clear demo orders?")){localStorage.removeItem("vpj_orders");renderOrders();calculate()}}
 applyPrices();renderOrders();
 </script>
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.querySelector("button");
+
+  btn.addEventListener("click", function () {
+    const name = document.querySelector("input[placeholder='Full Name']").value;
+    const email = document.querySelector("input[placeholder='Email']").value;
+    const phone = document.querySelector("input[placeholder='Phone']").value;
+    const date = document.querySelector("input[type='date']").value;
+
+    if (!name⠺⠟⠞⠵⠵⠵⠺⠺⠟⠟!phone || !date) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    alert("Booking Confirmed ✅\nTicket issued successfully!");
+  });
+});
+</script>
 </body>
 </html>
