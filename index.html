@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vancouver Peak Journey</title>
+<style>
+:root{--navy:#061d35;--gold:#f2a900;--gold2:#ffc857;--bg:#f6f8fb;--ink:#0b2340;--muted:#667085;--green:#159957;--red:#d83a3a}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial;background:var(--bg);color:var(--ink)}
+header{background:var(--navy);color:white;display:flex;justify-content:space-between;align-items:center;padding:16px 4vw;position:sticky;top:0;z-index:10}
+.brand{font-weight:950}.brand span{color:var(--gold)}
+button,.btn{border:0;border-radius:12px;padding:12px 16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#061d35;font-weight:900;cursor:pointer;text-decoration:none;display:inline-block}
+.ghost{background:transparent;color:white;border:1px solid var(--gold)}
+.hero{min-height:560px;background:linear-gradient(90deg,rgba(6,29,53,.92),rgba(6,29,53,.45)),url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=85') center/cover;color:white;display:flex;align-items:center;padding:48px 4vw}
+.hero h1{font-size:clamp(42px,7vw,78px);line-height:.95;margin:0 0 18px}.hero p{font-size:21px;max-width:650px;line-height:1.5}
+.wrap{max-width:1180px;margin:auto;padding:42px 20px}.title{text-align:center;margin-bottom:28px}.title h2{font-size:36px;margin:8px 0}.title p{color:var(--muted);margin:0}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.card{background:white;border-radius:24px;overflow:hidden;box-shadow:0 16px 40px rgba(7,31,58,.13);position:relative}.badge{position:absolute;top:14px;left:14px;background:var(--gold);padding:8px 12px;border-radius:9px;font-weight:950}.photo{height:250px;background:center/cover}.body{padding:22px}.body h3{font-size:27px;margin:0}.desc{color:var(--muted);line-height:1.55}.features{list-style:none;padding:0;margin:18px 0;display:grid;gap:9px}.features li:before{content:'✦';color:var(--gold);margin-right:8px}.price-row{display:flex;justify-content:space-between;align-items:end;gap:12px}.price{font-size:34px;font-weight:950}.price small{font-size:14px;color:var(--muted)}.addon-card{border:1.5px solid var(--gold);border-radius:14px;padding:12px;margin:12px 0;display:flex;justify-content:space-between;font-weight:850}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}.modal.active{display:flex}.sheet{width:min(820px,100%);max-height:92vh;overflow:auto;background:white;border-radius:26px;box-shadow:0 30px 80px rgba(0,0,0,.35)}.sheet-head{background:var(--navy);color:white;padding:22px 26px;display:flex;justify-content:space-between;align-items:center}.sheet-head h2{margin:0}.close{background:transparent;color:white;border:1px solid rgba(255,255,255,.45)}.toolbar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background:#f3f7fb;padding:16px 22px}.step{background:white;border-radius:13px;padding:12px;text-align:center;font-weight:950;color:#6b7280}.step.active{background:var(--gold);color:var(--navy)}.sheet-body{padding:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:grid;gap:7px;font-weight:760;color:#3c4654}input,select{width:100%;padding:14px;border:1px solid #dbe3ed;border-radius:12px;font-size:15px;background:white}.notice{display:none;background:#fff4d7;border:1px solid #f3d17a;color:#725200;padding:13px;border-radius:14px;margin:14px 0}.summary{background:#f4f8fc;border:1px solid #dce7f2;border-radius:18px;padding:18px;margin:16px 0;line-height:1.8}.ticket{display:none;border:2px dashed var(--gold);border-radius:20px;padding:20px;background:#fffdf5;line-height:1.8;margin-top:16px}.ticket-id{font-size:23px;font-weight:950;color:var(--navy)}
+.admin{display:none;margin-top:32px;background:white;border:2px dashed #ccd6e2;border-radius:24px;padding:24px}.admin.active{display:block}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.admin-box{background:#f5f7fb;border-radius:18px;padding:18px}table{width:100%;border-collapse:collapse;background:white;margin-top:14px}th,td{border-bottom:1px solid #e8edf3;padding:10px;text-align:left;font-size:14px}th{background:#f2f6fb}
+footer{background:var(--navy);color:white;padding:28px 4vw;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.float-wa{position:fixed;right:18px;bottom:18px;z-index:30;background:#20c55e;color:white;border-radius:999px;padding:14px 18px;font-weight:950;text-decoration:none}
+@media(max-width:900px){header{align-items:flex-start;flex-direction:column}.cards,.grid,.admin-grid{grid-template-columns:1fr}.price-row{align-items:flex-start;flex-direction:column}.photo{height:270px}.toolbar{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">VANCOUVER <span>PEAK JOURNEY</span></div>
+  <div>
+    <a class="btn ghost" href="#attractions">Attractions</a>
+    <button class="ghost" id="adminBtn">Admin</button>
+    <a class="btn ghost" href="https://wa.me/17786819140">WhatsApp</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div style="color:var(--gold);font-weight:950;letter-spacing:.08em">EXPLORE. EXPERIENCE. REMEMBER.</div>
+    <h1>Vancouver Peak Journey</h1>
+    <p>Premium Vancouver attraction bookings with flexible time slots, instant ticket preview, and WhatsApp coordination.</p>
+    <a class="btn" href="#attractions">Choose Your Adventure</a>
+    <button class="btn" style="background:white" data-tour="sea">Book Now</button>
+  </div>
+</section>
+
+<main class="wrap">
+<section id="attractions">
+  <div class="title"><div style="color:var(--gold);font-size:30px">⛰</div><h2>Explore Vancouver’s Top Attractions</h2><p>Pick a tour, select date and time, choose guests, and get your ticket.</p></div>
+  <div class="cards">
+    <article class="card"><div class="badge">MOST POPULAR</div><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=85')"></div><div class="body"><h3>Sea to Sky Gondola</h3><p class="desc">Panoramic views, suspension bridge, and unforgettable photo moments.</p><ul class="features"><li>Gondola Ride</li><li>Sky Pilot Suspension Bridge</li><li>Scenic Viewpoints</li><li>4–5 Hours Experience</li></ul><div class="price-row"><div class="price">$<span id="cardSea">125</span> <small>/ person</small></div><button data-tour="sea">Book Now</button></div></div></article>
+    <article class="card"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1200&q=85')"></div><div class="body"><h3>Grouse Mountain</h3><p class="desc">Mountain experience with city, ocean, forest, and sunset views.</p><ul class="features"><li>Grouse Gondola Ride</li><li>Mountain Viewpoints</li><li>Photo Stops</li><li>3–4 Hours Experience</li></ul><div class="price-row"><div class="price">$<span id="cardGrouse">100</span> <small>/ person</small></div><button data-tour="grouse">Book Now</button></div></div></article>
+    <article class="card"><div class="photo" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=85')"></div><div class="body"><h3>Whistler Village</h3><p class="desc">Whistler Village, scenic stops, free time, and optional Sea to Sky add-on.</p><ul class="features"><li>Whistler Village</li><li>Scenic Stops</li><li>Free Time</li><li>6–7 Hours Experience</li></ul><div class="addon-card"><div>Add Sea to Sky Gondola</div><div>+$<span id="cardAddon">100</span></div></div><div class="price-row"><div class="price">$<span id="cardWhistler">125</span> <small>/ person</small></div><button data-tour="whistler">Book Now</button></div></div></article>
+  </div>
+</section>
+
+<section class="admin" id="adminPanel">
+  <h2>Admin Dashboard</h2><p style="color:var(--muted)">Password: <b>1234</b>. Data is saved in this browser.</p>
+  <div class="admin-grid">
+    <div class="admin-box"><h3>Change Prices</h3><label>Sea to Sky Price<input id="adminSea" type="number"></label><br><label>Grouse Price<input id="adminGrouse" type="number"></label><br><label>Whistler Price<input id="adminWhistler" type="number"></label><br><label>Whistler Add-on<input id="adminAddon" type="number"></label><br><button id="savePricesBtn">Save Prices</button></div>
+    <div class="admin-box"><h3>Orders</h3><label>Filter Date<input id="filterDate" type="date"></label><br><button id="refreshOrdersBtn">Refresh Orders</button> <button style="background:var(--red);color:white" id="clearOrdersBtn">Clear Demo Orders</button></div>
+  </div>
+  <table><thead><tr><th>Ticket</th><th>Tour</th><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Total</th></tr></thead><tbody id="ordersBody"></tbody></table>
+</section>
+</main>
+
+<footer><div><b>Vancouver Peak Journey</b></div><a style="color:white" href="https://wa.me/17786819140">WhatsApp: 778 681 9140</a></footer>
+<a class="float-wa" href="https://wa.me/17786819140">WhatsApp</a>
+
+<div class="modal" id="bookingModal">
+  <div class="sheet">
+    <div class="sheet-head"><div><h2 id="modalTitle">Book Tour</h2><div id="modalSubtitle"></div></div><button class="close" id="closeBtn">Close</button></div>
+    <div class="toolbar"><div class="step active">1. Details</div><div class="step active">2. Price</div><div class="step active">3. Ticket</div></div>
+    <div class="sheet-body">
+      <div class="grid">
+        <label>Full Name<input id="customerName" placeholder="Customer name"></label>
+        <label>Email<input id="customerEmail" type="email" placeholder="email@example.com"></label>
+        <label>Phone<input id="customerPhone" placeholder="+1 ..."></label>
+        <label>Date<input id="tourDate" type="date"></label>
+        <label>Time Slot<select id="timeSlot"><option value="Morning — 9:00 AM">Morning — 9:00 AM</option><option value="Noon — 1:00 PM">Noon — 1:00 PM</option><option value="Evening — 5:00 PM">Evening — 5:00 PM</option></select></label>
+        <label>Guests<select id="guestCount"><option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option><option value="5">5 guests</option><option value="6">6 guests</option><option value="7">7 guests</option><option value="8">8 guests</option></select></label>
+        <label style="grid-column:1/-1">Pickup Location<input id="pickupLocation" placeholder="Hotel / Airbnb / Address"></label>
+      </div>
+      <label id="addonWrap" style="display:none;margin-top:14px"><input id="addonCheck" type="checkbox" style="width:auto"> Add Sea to Sky Gondola +$<span id="addonText">100</span>/person</label>
+      <div class="notice" id="bookedNotice">This date/time is already booked. Please choose another slot.</div>
+      <div class="summary" id="summaryBox"></div>
+      <button class="green" id="confirmBtn" type="button">Confirm Booking & Issue Ticket</button>
+      <div class="ticket" id="ticketBox"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const TOUR_NAMES={sea:"Sea to Sky Gondola",grouse:"Grouse Mountain",whistler:"Whistler Village"};
+  const DEFAULT_PRICES={sea:125,grouse:100,whistler:125,addon:100};
+  let currentTour="sea";
+
+  const el = id => document.getElementById(id);
+  function getPrices(){try{return JSON.parse(localStorage.getItem("vpj_prices"))||DEFAULT_PRICES}catch(e){return DEFAULT_PRICES}}
+  function setPrices(p){localStorage.setItem("vpj_prices",JSON.stringify(p))}
+  function getOrders(){try{return JSON.parse(localStorage.getItem("vpj_orders"))||[]}catch(e){return []}}
+  function setOrders(o){localStorage.setItem("vpj_orders",JSON.stringify(o))}
+  function todayISO(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().split("T")[0]}
+  function isBooked(tour,date,slot){return getOrders().some(o=>o.tour===tour&&o.date===date&&o.slot===slot)}
+
+  function applyPrices(){
+    const p=getPrices();
+    el("cardSea").textContent=p.sea; el("cardGrouse").textContent=p.grouse; el("cardWhistler").textContent=p.whistler; el("cardAddon").textContent=p.addon; el("addonText").textContent=p.addon;
+    el("adminSea").value=p.sea; el("adminGrouse").value=p.grouse; el("adminWhistler").value=p.whistler; el("adminAddon").value=p.addon;
+  }
+
+  function openBooking(tour){
+    currentTour=tour;
+    const p=getPrices();
+    el("modalTitle").textContent="Book "+TOUR_NAMES[tour];
+    el("modalSubtitle").textContent="$"+p[tour]+" / person";
+    el("addonWrap").style.display=tour==="whistler"?"block":"none";
+    el("addonCheck").checked=false;
+    el("tourDate").min=todayISO();
+    el("ticketBox").style.display="none";
+    el("bookingModal").classList.add("active");
+    calculate();
+  }
+
+  function closeBooking(){el("bookingModal").classList.remove("active")}
+
+  function calculate(){
+    const p=getPrices(), d=el("tourDate").value, s=el("timeSlot").value, g=Number(el("guestCount").value||1);
+    const add=currentTour==="whistler" && el("addonCheck").checked;
+    const pp=p[currentTour]+(add?p.addon:0), total=pp*g, booked=d&&isBooked(currentTour,d,s);
+    el("bookedNotice").style.display=booked?"block":"none";
+    el("confirmBtn").disabled=!!booked;
+    el("confirmBtn").style.opacity=booked?".45":"1";
+    el("summaryBox").innerHTML="<b>"+TOUR_NAMES[currentTour]+"</b><br>Date: "+(d||"Select date")+"<br>Time: "+s+"<br>Guests: "+g+"<br>"+(add?"Add-on: Sea to Sky Gondola<br>":"")+"Price/person: $"+pp+"<br><b>Total: $"+total+"</b>"+(booked?"<br><b style='color:#d83a3a;text-decoration:line-through'>Already booked</b>":"");
+  }
+
+  function confirmBooking(){
+    const n=el("customerName").value.trim(), e=el("customerEmail").value.trim(), ph=el("customerPhone").value.trim(), d=el("tourDate").value, s=el("timeSlot").value, pu=el("pickupLocation").value.trim();
+    if(!n||!e||!ph||!d){alert("Please fill name, email, phone, and date.");return}
+    if(isBooked(currentTour,d,s)){alert("This date/time is already booked.");calculate();return}
+    const p=getPrices(), g=Number(el("guestCount").value||1), add=currentTour==="whistler"&&el("addonCheck").checked, pp=p[currentTour]+(add?p.addon:0), total=pp*g;
+    const ticket="VPJ-"+Math.floor(100000+Math.random()*900000);
+    const order={ticket,tour:currentTour,tourName:TOUR_NAMES[currentTour],name:n,email:e,phone:ph,pickup:pu,date:d,slot:s,guests:g,addon:add,total};
+    const os=getOrders(); os.push(order); setOrders(os);
+    const wa=encodeURIComponent("Ticket Issued - "+ticket+"\\n"+order.tourName+"\\n"+d+" / "+s+"\\n"+n+"\\nGuests: "+g+"\\nTotal: $"+total);
+    el("ticketBox").style.display="block";
+    el("ticketBox").innerHTML="<div class='ticket-id'>"+ticket+"</div><b>Tour:</b> "+order.tourName+"<br><b>Name:</b> "+n+"<br><b>Email:</b> "+e+"<br><b>Phone:</b> "+ph+"<br><b>Date:</b> "+d+"<br><b>Time:</b> "+s+"<br><b>Guests:</b> "+g+"<br>"+(add?"<b>Add-on:</b> Sea to Sky Gondola<br>":"")+"<b>Pickup:</b> "+(pu||"To be confirmed")+"<br><b>Total:</b> $"+total+"<br><br><a class='btn green' href='https://wa.me/17786819140?text="+wa+"'>Send to WhatsApp</a> <button type='button' onclick='window.print()'>Print / Save</button>";
+    calculate(); renderOrders();
+  }
+
+  function adminLogin(){
+    const pass=prompt("Admin password:");
+    if(pass==="1234"){el("adminPanel").classList.add("active");el("adminPanel").scrollIntoView({behavior:"smooth"});renderOrders()}else if(pass!==null){alert("Wrong password")}
+  }
+
+  function savePrices(){
+    setPrices({sea:Number(el("adminSea").value||125),grouse:Number(el("adminGrouse").value||100),whistler:Number(el("adminWhistler").value||125),addon:Number(el("adminAddon").value||100)});
+    applyPrices(); calculate(); alert("Prices saved.");
+  }
+
+  function renderOrders(){
+    const f=el("filterDate").value;
+    const rows=getOrders().filter(o=>!f||o.date===f);
+    el("ordersBody").innerHTML=rows.length?rows.map(o=>"<tr><td>"+o.ticket+"</td><td>"+o.tourName+"</td><td>"+o.date+"</td><td>"+o.slot+"</td><td>"+o.name+"</td><td>"+o.phone+"</td><td>$"+o.total+"</td></tr>").join(""):"<tr><td colspan='7'>No orders yet.</td></tr>";
+  }
+  function clearOrders(){if(confirm("Clear demo orders?")){localStorage.removeItem("vpj_orders");renderOrders();calculate()}}
+
+  document.addEventListener("DOMContentLoaded", function(){
+    document.querySelectorAll("[data-tour]").forEach(btn=>btn.addEventListener("click",()=>openBooking(btn.getAttribute("data-tour"))));
+    el("closeBtn").addEventListener("click", closeBooking);
+    el("tourDate").addEventListener("change", calculate);
+    el("timeSlot").addEventListener("change", calculate);
+    el("guestCount").addEventListener("change", calculate);
+    el("addonCheck").addEventListener("change", calculate);
+    el("confirmBtn").addEventListener("click", confirmBooking);
+    el("adminBtn").addEventListener("click", adminLogin);
+    el("savePricesBtn").addEventListener("click", savePrices);
+    el("refreshOrdersBtn").addEventListener("click", renderOrders);
+    el("clearOrdersBtn").addEventListener("click", clearOrders);
+    el("filterDate").addEventListener("change", renderOrders);
+    applyPrices(); renderOrders();
+  });
+})();
+</script>
+</body>
+</html>
