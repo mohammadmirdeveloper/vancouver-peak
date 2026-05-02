@@ -39,7 +39,11 @@ export default async function handler(req, res) {
         time_slot: body.slot,
         pickup_location: body.pickup || "",
         guests: Number(body.guests || 1),
-        total: Number(body.total || 0),
+       total:
+  body.tour === "sea" ? 125 * Number(body.guests || 1) :
+  body.tour === "grouse" ? 100 * Number(body.guests || 1) :
+  body.tour === "whistler" ? (125 + (body.addon ? 100 : 0)) * Number(body.guests || 1) :
+  0,
         add_on: !!body.addon
       };
 
