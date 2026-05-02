@@ -1,63 +1,51 @@
-import { db, ticketId } from './_lib.js';
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 export default async function handler(req, res) {
   try {
-    const supabase = db();
-
-    if (req.method === 'GET') {
+    if (req.method === "GET") {
       const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
-      return res.status(200).json({ orders: data || [] });
+      return res.status(200).json(data);
     }
 
-    if (req.method === 'POST') {
+    if (req.method === "POST") {
       const body = req.body || {};
 
-      if (!body.tour⠞⠟⠺⠟⠞⠺⠵⠺⠞⠺⠺⠟⠟⠞!body.email⠺⠺⠟⠞⠟⠵⠟⠞⠵⠟⠵⠞⠵⠵⠟!body.date || !body.slot) {
+      if (!body.date || !body.slot || !body.name || !body.phone) {
         return res.status(400).json({
-          error: 'Missing required fields'
+          error: "Missing required fields"
         });
       }
 
-      const pricesResult = await supabase
-        .from('settings')
-        .select('value')
-        .eq('key', 'prices')
-        .single();
+      const ticketId = "VPJ-" + Date.now().toString().slice(-6);
 
-      if (pricesResult.error) throw pricesResult.error;
-
-      const prices = pricesResult.data.value || {};
-
-      let total = Number(prices[body.tour]⠞⠺⠵⠵⠵⠞⠞⠺⠵⠞⠞⠞⠵⠞⠵⠞⠟⠵⠞⠵⠵⠵⠟⠞⠟⠞⠞1);
-
-      if (body.tour === 'whistler' && body.addon) {
-        total += Number(prices.addon⠟⠞⠵⠵⠵⠵⠵⠺⠺⠞⠺⠞⠺⠺⠞⠵⠵⠟⠞⠞⠟⠞⠞⠺⠵⠟⠵1);
-      }
-
-      const orderData = {
-        ticket_id: ticketId(),
-        tour: body.tour,
-        tour_name: body.tour,
+      const orderPayload = {
+        ticket_id: ticketId,
+        tour_name: body.tour || "",
         customer_name: body.name,
-        email: body.email,
-        phone: body.phone,
-        pickup: body.pickup || '',
+        customer_email: body.email || "",
+        customer_phone: body.phone,
         tour_date: body.date,
         time_slot: body.slot,
+        pickup_location: body.pickup || "",
         guests: Number(body.guests || 1),
-        addon: !!body.addon,
-        total
+        total: Number(body.total || 0),
+        add_on: !!body.addon
       };
 
       const { data, error } = await supabase
-        .from('orders')
-        .insert(orderData)
+        .from("orders")
+        .insert([orderPayload])
         .select()
         .single();
 
@@ -65,17 +53,17 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
+        ticket_id: ticketId,
         order: data
       });
     }
 
     return res.status(405).json({
-      error: 'Method not allowed'
+      error: "Method not allowed"
     });
-
-  } catch (err) {
+  } catch (e) {
     return res.status(500).json({
-      error: err.message
+      error: e.message
     });
   }
 }
