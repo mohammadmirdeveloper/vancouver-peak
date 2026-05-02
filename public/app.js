@@ -13,56 +13,7 @@ async function openBooking(tour){currentTour=tour;selectedSlot="";modalTitle.tex
 async function loadAvailability(){const d=tourDate.value;if(!d){bookedSlots=[];renderSlots();return}const data=await api(`/api/availability?tour=${currentTour}&date=${d}`);bookedSlots=data.bookedSlots||[];renderSlots()}
 function renderSlots(){slotGrid.innerHTML="";SLOTS.forEach(slot=>{const booked=bookedSlots.includes(slot);const div=document.createElement("div");div.className="slot-card"+(booked?" booked":"")+(selectedSlot===slot&&!booked?" selected":"");div.innerHTML=slot.split(" — ")[0]+"<small>"+slot.split(" — ")[1]+"</small>"+(booked?"<small>Booked</small>":"");if(!booked)div.onclick=()=>{selectedSlot=slot;renderSlots();calculate()};slotGrid.appendChild(div)})}
 function calculate(){const p=settings.prices,d=tourDate.value,g=Number(guestCount.value||1),add=currentTour==="whistler"&&addonCheck.checked,pp=p[currentTour]+(add?p.addon:0),total=pp*g;summaryBox.innerHTML=`<b>${TOUR_NAMES[currentTour]}</b><br>Date: ${d||"Select date"}<br>Time: ${selectedSlot||"Select an available time"}<br>Guests: ${g}<br>${add?"Add-on: Sea to Sky<br>":""}Price/person: $${pp}<br><b>Total: $${total}</b>`;confirmBtn.disabled=!(d&&selectedSlot)}
-async function confirmBooking(){
-  const body = {
-    tour: currentTour,
-    name: customerName.value.trim(),
-    email: customerEmail.value.trim(),
-    phone: customerPhone.value.trim(),
-    date: tourDate.value,
-    slot: selectedSlot,
-    pickup: pickupLocation.value.trim(),
-    guests: Number(guestCount.value || 1),
-    addon: currentTour === "whistler" && addonCheck.checked
-  };
-
-  if(!body.name⠞⠟⠞⠵⠞⠵⠺⠟⠟⠟⠟⠺⠵⠞⠵!body.phone⠵⠞⠵⠞⠞⠞⠺⠵⠺⠞⠵⠞⠟⠞!body.slot){
-    alert("Fill all required fields and choose a slot.");
-    return;
-  }
-
-  try{
-    const data = await api("/api/orders", {
-      method: "POST",
-      body: JSON.stringify(body)
-    });
-
-    // Safe fallback so undefined crash never happens
-    const order = data.order⠺⠵⠟⠺⠵⠵⠺⠵{};
-
-    const ticketId =
-      order.ticket_id ||
-      data.ticket_id ||
-      "VPJ-" + Math.floor(100000 + Math.random() * 900000);
-
-    ticketBox.style.display = "block";
-    ticketBox.innerHTML = `
-      <div class="ticket-id">${ticketId}</div>
-      <b>Tour:</b> ${order.tour_name || TOUR_NAMES[currentTour]}<br>
-      <b>Name:</b> ${order.customer_name || body.name}<br>
-      <b>Date:</b> ${order.tour_date || body.date}<br>
-      <b>Time:</b> ${order.time_slot || body.slot}<br>
-      <b>Guests:</b> ${order.guests || body.guests}<br>
-      <b>Total:</b> $${order.total || "Pending"}
-    `;
-
-    await loadAvailability();
-
-  } catch(e) {
-    alert(e.message || "Booking failed.");
-    await loadAvailability();
-  }
-}
+async function confirmBooking(){const body={tour:currentTour,name:customerName.value.trim(),email:customerEmail.value.trim(),phone:customerPhone.value.trim(),date:tourDate.value,slot:selectedSlot,pickup:pickupLocation.value.trim(),guests:Number(guestCount.value||1),addon:currentTour==="whistler"&&addonCheck.checked};if(!body.name||!body.email||!body.phone||!body.date||!body.slot){alert("Fill all required fields and choose a slot.");return}try{const data=await api("/api/orders",{method:"POST",body:JSON.stringify(body)});const o=data.order;ticketBox.style.display="block";ticketBox.innerHTML=`<div class="ticket-id">${o.ticket_id}</div><b>Tour:</b> ${o.tour_name}<br><b>Name:</b> ${o.customer_name}<br><b>Date:</b> ${o.tour_date}<br><b>Time:</b> ${o.time_slot}<br><b>Guests:</b> ${o.guests}<br><b>Total:</b> $${o.total}`;await loadAvailability()}catch(e){alert(e.message);await loadAvailability()}}
 async function adminLogin(){
   adminPassword = '123456';
   adminPanel.classList.add("active");
@@ -75,3 +26,7 @@ async function uploadOne(input,key,images){const file=input.files[0];if(!file)re
 async function uploadImages(){const images={...(settings.images||{})};await uploadOne(heroFile,"hero",images);await uploadOne(seaFile,"sea",images);await uploadOne(grouseFile,"grouse",images);await uploadOne(whistlerFile,"whistler",images);await api("/api/settings",{method:"POST",body:JSON.stringify({images})});await loadSettings();alert("Images uploaded.")}
 async function renderOrders(){const d=filterDate.value;const data=await api("/api/orders"+(d?`?date=${d}`:""));ordersBody.innerHTML=(data.orders||[]).map(o=>`<tr><td>${o.ticket_id}</td><td>${o.tour_name}</td><td>${o.tour_date}</td><td>${o.time_slot}</td><td>${o.customer_name}</td><td>${o.phone}</td><td>$${o.total}</td></tr>`).join("")||"<tr><td colspan='7'>No orders</td></tr>"}
 document.addEventListener("DOMContentLoaded",async()=>{await loadSettings();document.querySelectorAll("[data-tour]").forEach(b=>b.onclick=()=>openBooking(b.dataset.tour));closeBtn.onclick=()=>bookingModal.classList.remove("active");tourDate.onchange=async()=>{selectedSlot="";await loadAvailability();calculate()};guestCount.onchange=calculate;addonCheck.onchange=calculate;confirmBtn.onclick=confirmBooking;adminBtn.onclick=adminLogin;savePricesBtn.onclick=savePrices;uploadImagesBtn.onclick=uploadImages;refreshOrdersBtn.onclick=renderOrders;filterDate.onchange=renderOrders;});
+Beta
+0 / 0
+used queries
+1
