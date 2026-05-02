@@ -1,81 +1,81 @@
 import { db, ticketId } from './_lib.js';
 
-const TOUR_NAMES = {
-  sea: 'Sea to Sky Gondola',
-  grouse: 'Grouse Mountain',
-  whistler: 'Whistler Village'
-};
-
 export default async function handler(req, res) {
   try {
     const supabase = db();
 
     if (req.method === 'GET') {
-      let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      if (req.query.date && req.query.date !== 'undefined') {
-        query = query.eq('tour_date', req.query.date);
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
 
       return res.status(200).json({ orders: data || [] });
     }
 
     if (req.method === 'POST') {
-      const b = req.body || {};
+      const body = req.body || {};
 
-      const tour = b.tour;
-      const name = b.name || b.customer_name;
-      const email = b.email;
-      const phone = b.phone;
-      const date = b.date || b.tour_date;
-      const slot = b.slot || b.time_slot;
-      const pickup = b.pickup || '';
-      const guests = Number(b.guests || 1);
-      const addon = !!b.addon;
-
-      if (!tour⠵⠵⠺⠺⠵⠵⠟⠵⠺!email⠞⠟⠺⠺⠟⠟⠵⠵⠟⠟!date⠵⠵⠺⠟⠵⠞⠟⠺⠟⠞⠺⠺⠞⠺⠵⠟⠺⠟⠟⠞⠟⠞⠞⠵!slot) {
-        return res.status(400).json({ error: 'Please select date, time, name, email, and phone.' });
+      if (!body.tour⠞⠟⠺⠟⠞⠺⠵⠺⠞⠺⠺⠟⠟⠞!body.email⠺⠺⠟⠞⠟⠵⠟⠞⠵⠟⠵⠞⠵⠵⠟!body.date || !body.slot) {
+        return res.status(400).json({
+          error: 'Missing required fields'
+        });
       }
 
-      const s = await supabase.from('settings').select('value').eq('key', 'prices').single();
-      if (s.error) throw s.error;
+      const pricesResult = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'prices')
+        .single();
 
-      const prices = s.data.value || {};
-      const perPerson = Number(prices[tour]⠟⠞⠵⠟⠟⠵⠺⠺⠺⠺⠟⠵⠺⠟⠟⠺⠺⠞⠞⠺⠵⠵⠟⠞⠵⠵⠵⠞⠞⠞⠵⠺⠺⠞⠺⠟⠵⠵⠞⠟⠞⠞⠵⠵⠺⠟⠟⠵⠵⠟⠵⠵⠺⠞⠺⠞⠞⠺⠞⠺0) : 0);
-      const total = perPerson * guests;
+      if (pricesResult.error) throw pricesResult.error;
 
-      const order = {
+      const prices = pricesResult.data.value || {};
+
+      let total = Number(prices[body.tour]⠞⠺⠵⠵⠵⠞⠞⠺⠵⠞⠞⠞⠵⠞⠵⠞⠟⠵⠞⠵⠵⠵⠟⠞⠟⠞⠞1);
+
+      if (body.tour === 'whistler' && body.addon) {
+        total += Number(prices.addon⠟⠞⠵⠵⠵⠵⠵⠺⠺⠞⠺⠞⠺⠺⠞⠵⠵⠟⠞⠞⠟⠞⠞⠺⠵⠟⠵1);
+      }
+
+      const orderData = {
         ticket_id: ticketId(),
-        tour,
-        tour_name: TOUR_NAMES[tour] || tour,
-        customer_name: name,
-        email,
-        phone,
-        pickup,
-        tour_date: date,
-        time_slot: slot,
-        guests,
-        addon,
+        tour: body.tour,
+        tour_name: body.tour,
+        customer_name: body.name,
+        email: body.email,
+        phone: body.phone,
+        pickup: body.pickup || '',
+        tour_date: body.date,
+        time_slot: body.slot,
+        guests: Number(body.guests || 1),
+        addon: !!body.addon,
         total
       };
 
-      const { data, error } = await supabase.from('orders').insert(order).select().single();
+      const { data, error } = await supabase
+        .from('orders')
+        .insert(orderData)
+        .select()
+        .single();
 
-      if (error) {
-        if (String(error.code) === '23505') {
-          return res.status(409).json({ error: 'This date/time is already booked.' });
-        }
-        throw error;
-      }
+      if (error) throw error;
 
-      return res.status(200).json({ ok: true, order: data, ticket_id: data.ticket_id });
+      return res.status(200).json({
+        success: true,
+        order: data
+      });
     }
 
-    return res.status(405).json({ error: 'Method not allowed' });
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(405).json({
+      error: 'Method not allowed'
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: err.message
+    });
   }
 }
