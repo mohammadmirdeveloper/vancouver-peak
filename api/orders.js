@@ -66,8 +66,14 @@ export default async function handler(req, res) {
       error: "Method not allowed"
     });
   } catch (e) {
-    return res.status(500).json({
-      error: e.message
+     if (e.message.includes("duplicate key value")) {
+    return res.status(409).json({
+      error: "This time slot is already booked. Please choose another available time."
     });
+  }
+
+  return res.status(500).json({
+    error: e.message
+  });
   }
 }
