@@ -25,6 +25,6 @@ filterDate.onchange=renderOrders;});
 
 document.addEventListener("click",function(e){
  if(e.target && e.target.id==="confirmBtn"){
-   setTimeout(()=>{window.location.href="لینک_استرایپ_تو";},1500);
+   setTimeout(()=>{window.location.href="https://buy.stripe.com/test_dRmeVddgMf414E3fmG3ZK00";},1500);
  }
 });
