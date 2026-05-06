@@ -22,9 +22,3 @@ async function uploadImages(){const images={...(settings.images||{})};await uplo
 async function renderOrders(){const d=filterDate.value;const data=await api("/api/orders"+(d?`?date=${d}`:""));ordersBody.innerHTML=(data.orders||[]).map(o=>`<tr><td>${o.ticket_id}</td><td>${o.tour_name}</td><td>${o.tour_date}</td><td>${o.time_slot}</td><td>${o.customer_name}</td><td>${o.phone}</td><td>$${o.total}</td></tr>`).join("")||"<tr><td colspan='7'>No orders</td></tr>"}
 document.addEventListener("DOMContentLoaded",async()=>{await loadSettings();document.querySelectorAll("[data-tour]").forEach(b=>b.onclick=()=>openBooking(b.dataset.tour));closeBtn.onclick=()=>bookingModal.classList.remove("active");tourDate.onchange=async()=>{selectedSlot="";await loadAvailability();calculate()};guestCount.onchange=calculate;addonCheck.onchange=calculate;confirmBtn.onclick=confirmBooking;adminBtn.onclick=adminLogin;savePricesBtn.onclick=savePrices;uploadImagesBtn.onclick=uploadImages;refreshOrdersBtn.onclick=renderOrders;filterDate.onchange=renderOrders;});
 filterDate.onchange=renderOrders;});
-
-document.addEventListener("click",function(e){
- if(e.target && e.target.id==="confirmBtn"){
-   setTimeout(()=>{window.location.href="https://buy.stripe.com/test_dRmeVddgMf414E3fmG3ZK00";},1500);
- }
-});
