@@ -1,4 +1,4 @@
-const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_xxxxx";
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_dRmeVddgMf414E3fmG3ZK00";
 
 const originalFetch = window.fetch;
 
@@ -11,7 +11,7 @@ window.fetch = async function (...args) {
 
     if (url.includes("/api/orders") && method === "POST" && response.ok) {
       setTimeout(() => {
-        window.location.href = STRIPE_PAYMENT_LINK;
+       window.location.href = "https://buy.stripe.com/test_dRmeVddgMf414E3fmG3ZK00";
       }, 1500);
     }
   } catch (e) {}
