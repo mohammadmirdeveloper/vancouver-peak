@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // =====================
   // IMAGE PATHS
   // =====================
-  const heroImage = "./hero.jpg";
-  const seaImage = "./sea.jpg";
-  const grouseImage = "./grouse.jpg";
-  const whistlerImage = "./whistler.jpg";
+ const heroImage = "/hero.jpg";
+const seaImage = "/sea.jpg";
+const grouseImage = "/grouse.jpg";
+const whistlerImage = "/whistler.jpg";
 
   // =====================
   // TOUR DATA
