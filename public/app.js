@@ -46,7 +46,7 @@ const whistlerImage = "/whistler.jpg";
   // =====================
   // ROOT APP
   // =====================
-  const app = document.getElementById("app");
+  const app = document.getElementById("app") || document.body;
 
   // =====================
   // HELPER FUNCTIONS
