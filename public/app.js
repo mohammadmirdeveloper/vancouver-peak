@@ -1,289 +1,221 @@
-// VANCOUVER PEAK JOURNEY - FINAL REBUILT APP.JS
-// Clean rebuild: image fix + pricing + stripe + guest discounts + minimum 2 guests
-
 document.addEventListener("DOMContentLoaded", () => {
-  // =====================
-  // IMAGE PATHS
-  // =====================
- const heroImage = "/hero.jpg";
-const seaImage = "/sea.jpg";
-const grouseImage = "/grouse.jpg";
-const whistlerImage = "/whistler.jpg";
-
-  // =====================
-  // TOUR DATA
-  // =====================
   const tours = [
     {
       id: "sea",
       name: "Sea to Sky Gondola",
-      image: seaImage,
-      description:
-        "Experience breathtaking mountain, ocean, and sky views with Vancouver’s most iconic scenic journey.",
-      price: 125,
+      image: "/sea.jpg",
+      price: 150,
       stripe: "https://buy.stripe.com/test_3cI28rdgM4pn2vVcau3ZK01",
+      desc: "Experience breathtaking mountain, ocean, and sky views."
     },
     {
       id: "grouse",
       name: "Grouse Mountain",
-      image: grouseImage,
-      description:
-        "Discover Vancouver from above with wildlife, mountaintop adventure, and unforgettable city views.",
+      image: "/grouse.jpg",
       price: 100,
       stripe: "https://buy.stripe.com/test_fZu5kDdgM5tr3zZ3DY3ZK02",
+      desc: "Discover Vancouver from above with wildlife and city views."
     },
     {
       id: "whistler",
       name: "Whistler Adventure",
-      image: whistlerImage,
-      description:
-        "Luxury day trip through the Sea to Sky Highway to one of Canada’s most famous destinations.",
-      price: 125,
+      image: "/whistler.jpg",
+      price: 190,
+      seaAddOn: 60,
       stripe: "https://buy.stripe.com/test_00w00jb8EcVT8Uj5M63ZK03",
-    },
+      desc: "Luxury day trip through the Sea to Sky Highway to Whistler."
+    }
   ];
 
-  // =====================
-  // ROOT APP
-  // =====================
-  const app = document.getElementById("app") || document.body;
+  function priceCalc(basePrice, guests) {
+    const original = basePrice * guests;
+    let discountRate = 0;
 
-  // =====================
-  // HELPER FUNCTIONS
-  // =====================
-  function calculateTotal(basePrice, guests) {
-    let total = basePrice * guests;
-    let discount = 0;
+    if (guests === 3) discountRate = 0.08;
+    if (guests >= 4) discountRate = 0.15;
 
-    if (guests === 3) {
-      discount = total * 0.08;
-    } else if (guests >= 4) {
-      discount = total * 0.15;
-    }
-
+    const discount = original * discountRate;
     return {
-      total,
+      original,
       discount,
-      final: total - discount,
+      final: original - discount
     };
   }
 
-  function guestOptions() {
-    let options = "";
-    for (let i = 2; i <= 4; i++) {
-      options += `<option value="${i}">${i} Guests</option>`;
-    }
-    return options;
-  }
+  document.body.innerHTML = `
+    <header style="padding:22px 8%;background:#071d35;color:white;font-weight:800;">
+      VANCOUVER <span style="color:#d4a017;">PEAK JOURNEY</span>
+    </header>
 
-  // =====================
-  // HERO SECTION
-  // =====================
-  function renderHero() {
-    return `
-      <section id="hero" style="
-        background:
-          linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.60)),
-          url('${heroImage}') center/cover no-repeat;
-        min-height: 90vh;
-        display: flex;
-        align-items: center;
-        padding: 60px 8%;
-        color: white;
-      ">
-        <div style="max-width:700px;">
-          <p style="
-            color:#d4a017;
-            font-weight:700;
-            letter-spacing:2px;
-            font-size:18px;
-            margin-bottom:20px;
+    <section style="
+      background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('/hero.jpg') center/cover;
+      min-height:420px;color:white;display:flex;align-items:center;padding:60px 8%;
+    ">
+      <div>
+        <p style="color:#d4a017;font-weight:800;">EXPLORE. EXPERIENCE. REMEMBER.</p>
+        <h1 style="font-size:64px;margin:0;">Vancouver Peak Journey</h1>
+        <p style="font-size:20px;">Premium Vancouver attraction booking.</p>
+      </div>
+    </section>
+
+    <section style="padding:60px 8%;background:#f4f4f4;">
+      <h2 style="text-align:center;font-size:42px;">Choose Your Peak Experience</h2>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;">
+        ${tours.map(t => `
+          <div style="
+            background:white;
+            border-radius:20px;
+            overflow:hidden;
+            box-shadow:0 8px 24px rgba(0,0,0,.08);
           ">
-            EXPLORE. EXPERIENCE. REMEMBER.
-          </p>
+            <img src="${t.image}" style="width:100%;height:230px;object-fit:cover;">
 
-          <h1 style="
-            font-size: clamp(42px, 7vw, 82px);
-            margin:0 0 20px 0;
-            font-weight:800;
-            line-height:1.1;
-          ">
-            Vancouver Peak Journey
-          </h1>
+            <div style="padding:24px;">
+              <h3 style="font-size:30px;">${t.name}</h3>
+              <p>${t.desc}</p>
 
-          <p style="
-            font-size:20px;
-            line-height:1.7;
-            color:rgba(255,255,255,0.92);
-            margin-bottom:35px;
-          ">
-            Premium Vancouver attraction bookings with luxury comfort,
-            unforgettable views, and curated peak experiences.
-          </p>
+              <h3 style="color:#b88700;">
+                From $${t.price}/person
+                ${t.id === "whistler" ? `<br><span style="font-size:16px;color:#555;">+ Sea to Sky Add-On = $250/person</span>` : ""}
+              </h3>
 
-          <div style="display:flex; gap:15px; flex-wrap:wrap;">
-            <a href="#tours" style="
-              background:#d4a017;
-              color:black;
-              padding:16px 28px;
-              border-radius:12px;
-              text-decoration:none;
-              font-weight:700;
-            ">
-              Choose Your Adventure
-            </a>
+              <label>Guests</label>
+              <select id="${t.id}-guests" style="width:100%;padding:12px;margin:8px 0;">
+                <option value="2">2 Guests</option>
+                <option value="3">3 Guests - 8% Off</option>
+                <option value="4">4 Guests - 15% Off</option>
+              </select>
 
-            <a href="#tours" style="
-              background:white;
-              color:black;
-              padding:16px 28px;
-              border-radius:12px;
-              text-decoration:none;
-              font-weight:700;
-            ">
-              Book Now
-            </a>
-          </div>
-        </div>
-      </section>
-    `;
-  }
+              ${
+                t.id === "whistler"
+                  ? `
+                <label style="display:flex;align-items:center;gap:8px;margin:10px 0;">
+                  <input type="checkbox" id="whistler-addon">
+                  Add Sea to Sky Gondola (+$60/person)
+                </label>
+              `
+                  : ""
+              }
 
-  // =====================
-  // TOUR SECTION
-  // =====================
-  function renderTours() {
-    return `
-      <section id="tours" style="padding:80px 8%; background:#f7f7f7;">
-        <h2 style="
-          text-align:center;
-          font-size:42px;
-          margin-bottom:50px;
-        ">
-          Choose Your Peak Experience
-        </h2>
+              <label>Date</label>
+              <input id="${t.id}-date" type="date" style="width:100%;padding:12px;margin:8px 0;">
 
-        <div style="
-          display:grid;
-          grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-          gap:30px;
-        ">
-          ${tours
-            .map(
-              (tour) => `
-            <div style="
-              background:white;
-              border-radius:18px;
-              overflow:hidden;
-              box-shadow:0 8px 24px rgba(0,0,0,0.08);
-            ">
-              <img src="${tour.image}" alt="${tour.name}" style="
+              <label>Time</label>
+              <select id="${t.id}-time" style="width:100%;padding:12px;margin:8px 0;">
+                <option value="">Select time</option>
+                <option>9:00 AM</option>
+                <option>12:00 PM</option>
+                <option>3:00 PM</option>
+              </select>
+
+              <div id="${t.id}-price" style="font-weight:800;margin:14px 0;"></div>
+
+              <button data-id="${t.id}" style="
                 width:100%;
-                height:240px;
-                object-fit:cover;
+                padding:16px;
+                background:#d4a017;
+                border:none;
+                border-radius:12px;
+                font-weight:800;
+                font-size:16px;
+                cursor:pointer;
               ">
-
-              <div style="padding:24px;">
-                <h3 style="font-size:28px; margin-bottom:12px;">
-                  ${tour.name}
-                </h3>
-
-                <p style="
-                  color:#555;
-                  line-height:1.6;
-                  min-height:70px;
-                ">
-                  ${tour.description}
-                </p>
-
-                <p style="
-                  font-size:24px;
-                  font-weight:800;
-                  color:#d4a017;
-                ">
-                  From $${tour.price}/person
-                </p>
-
-                <label style="font-weight:600;">Guests:</label>
-                <select id="${tour.id}-guests" style="
-                  width:100%;
-                  padding:12px;
-                  margin:10px 0 15px 0;
-                  border-radius:10px;
-                ">
-                  ${guestOptions()}
-                </select>
-
-                <div id="${tour.id}-pricing" style="
-                  margin-bottom:18px;
-                  font-weight:600;
-                ">
-                  Total: $${tour.price * 2}
-                </div>
-
-                <button data-tour="${tour.id}" style="
-                  width:100%;
-                  padding:16px;
-                  background:#d4a017;
-                  border:none;
-                  border-radius:12px;
-                  font-weight:800;
-                  cursor:pointer;
-                  font-size:16px;
-                ">
-                  Continue to Secure Checkout
-                </button>
-              </div>
+                Review Booking
+              </button>
             </div>
-          `
-            )
-            .join("")}
-        </div>
-      </section>
-    `;
-  }
+          </div>
+        `).join("")}
+      </div>
+    </section>
 
-  // =====================
-  // RENDER APP
-  // =====================
-  app.innerHTML = `
-    ${renderHero()}
-    ${renderTours()}
+    <section id="summary" style="display:none;padding:40px 8%;background:white;"></section>
   `;
 
-  // =====================
-  // INTERACTIONS
-  // =====================
-  tours.forEach((tour) => {
-    const guestSelect = document.getElementById(`${tour.id}-guests`);
-    const pricingBox = document.getElementById(`${tour.id}-pricing`);
-    const button = document.querySelector(`button[data-tour="${tour.id}"]`);
+  tours.forEach(t => {
+    const guests = document.getElementById(`${t.id}-guests`);
+    const priceBox = document.getElementById(`${t.id}-price`);
 
-    function updatePricing() {
-      const guests = parseInt(guestSelect.value);
-      const pricing = calculateTotal(tour.price, guests);
+    function updatePrice() {
+      let base = t.price;
 
-      let discountText = "";
-      if (pricing.discount > 0) {
-        discountText = `<br>Discount: -$${pricing.discount.toFixed(2)}`;
+      if (t.id === "whistler") {
+        const addon = document.getElementById("whistler-addon");
+        if (addon && addon.checked) {
+          base += t.seaAddOn;
+        }
       }
 
-      pricingBox.innerHTML = `
-        Guests: ${guests}<br>
-        Original: $${pricing.total.toFixed(2)}
-        ${discountText}<br>
-        Final Total: <span style="color:#d4a017;">$${pricing.final.toFixed(
-          2
-        )}</span>
+      const p = priceCalc(base, Number(guests.value));
+
+      priceBox.innerHTML = `
+        Original: $${p.original.toFixed(2)}<br>
+        Discount: -$${p.discount.toFixed(2)}<br>
+        Final Total: <span style="color:#b88700;">$${p.final.toFixed(2)}</span>
       `;
     }
 
-    guestSelect.addEventListener("change", updatePricing);
+    guests.addEventListener("change", updatePrice);
 
-    button.addEventListener("click", () => {
-      window.location.href = tour.stripe;
+    if (t.id === "whistler") {
+      const addon = document.getElementById("whistler-addon");
+      if (addon) addon.addEventListener("change", updatePrice);
+    }
+
+    updatePrice();
+  });
+
+  document.querySelectorAll("button[data-id]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = tours.find(x => x.id === btn.dataset.id);
+
+      const guests = Number(document.getElementById(`${t.id}-guests`).value);
+      const date = document.getElementById(`${t.id}-date`).value;
+      const time = document.getElementById(`${t.id}-time`).value;
+
+      if (!date || !time) {
+        alert("Please select date and time first.");
+        return;
+      }
+
+      let base = t.price;
+      let addonText = "";
+
+      if (t.id === "whistler") {
+        const addon = document.getElementById("whistler-addon");
+        if (addon && addon.checked) {
+          base += t.seaAddOn;
+          addonText = " + Sea to Sky Add-On";
+        }
+      }
+
+      const p = priceCalc(base, guests);
+
+      const summary = document.getElementById("summary");
+      summary.style.display = "block";
+
+      summary.innerHTML = `
+        <h2>Booking Summary</h2>
+        <p><b>Tour:</b> ${t.name}${addonText}</p>
+        <p><b>Guests:</b> ${guests}</p>
+        <p><b>Date:</b> ${date}</p>
+        <p><b>Time:</b> ${time}</p>
+        <p><b>Final Total:</b> $${p.final.toFixed(2)}</p>
+
+        <button onclick="window.location.href='${t.stripe}'" style="
+          padding:16px 28px;
+          background:#d4a017;
+          border:none;
+          border-radius:12px;
+          font-weight:800;
+          font-size:17px;
+          cursor:pointer;
+        ">
+          Confirm & Go to Secure Payment
+        </button>
+      `;
+
+      summary.scrollIntoView({ behavior: "smooth" });
     });
-
-    updatePricing();
   });
 });
