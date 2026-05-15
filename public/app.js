@@ -5,29 +5,46 @@ document.addEventListener("DOMContentLoaded", () => {
       name: "Sea to Sky Gondola",
       image: "/sea.jpg",
       price: 150,
-      stripe: "https://buy.stripe.com/test_3cI28rdgM4pn2vVcau3ZK01",
-      desc: "Experience breathtaking mountain, ocean, and sky views."
+      desc: "Experience breathtaking mountain, ocean, and sky views.",
+      links: {
+        2: "https://buy.stripe.com/test_3cI28rdgM4pn2vVcau3ZK01",
+        3: "https://buy.stripe.com/test_4gM3cv90w6xv1rRfmG3ZK04",
+        4: "https://buy.stripe.com/test_9B67sL1y47Bz8Uj6Qa3ZK07"
+      }
     },
     {
       id: "grouse",
       name: "Grouse Mountain",
       image: "/grouse.jpg",
       price: 100,
-      stripe: "https://buy.stripe.com/test_fZu5kDdgM5tr3zZ3DY3ZK02",
-      desc: "Discover Vancouver from above with wildlife and city views."
+      desc: "Discover Vancouver from above with wildlife and city views.",
+      links: {
+        2: "https://buy.stripe.com/test_fZu5kDdgM5tr3zZ3DY3ZK02",
+        3: "https://buy.stripe.com/test_28E7sL1y47Bz5I7dey3ZK05",
+        4: "https://buy.stripe.com/test_cNicN5b8Ef410nN5M63ZK08"
+      }
     },
     {
       id: "whistler",
       name: "Whistler Adventure",
       image: "/whistler.jpg",
       price: 190,
-      seaAddOn: 60,
-      stripe: "https://buy.stripe.com/test_00w00jb8EcVT8Uj5M63ZK03",
-      desc: "Luxury day trip through the Sea to Sky Highway to Whistler."
+      addonPrice: 250,
+      desc: "Luxury day trip through the Sea to Sky Highway to Whistler.",
+      links: {
+        2: "https://buy.stripe.com/test_00w00jb8EcVT8Uj5M63ZK03",
+        3: "https://buy.stripe.com/test_3cIbJ1b8EcVTb2reiC3ZK0b",
+        4: "https://buy.stripe.com/test_00w00j5Ok5tr5I7cau3ZK09"
+      },
+      addonLinks: {
+        2: "https://buy.stripe.com/test_dRmeVddgMf414E3fmG3ZK00",
+        3: "https://buy.stripe.com/test_eVqdR9ccI7Bz2vVa2m3ZK06",
+        4: "https://buy.stripe.com/test_aFa4gz2C81db7QfgqK3ZK0a"
+      }
     }
   ];
 
-  function priceCalc(basePrice, guests) {
+  function calculatePrice(basePrice, guests) {
     const original = basePrice * guests;
     let discountRate = 0;
 
@@ -35,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (guests >= 4) discountRate = 0.15;
 
     const discount = original * discountRate;
+
     return {
       original,
       discount,
@@ -49,7 +67,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <section style="
       background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('/hero.jpg') center/cover;
-      min-height:420px;color:white;display:flex;align-items:center;padding:60px 8%;
+      min-height:420px;
+      color:white;
+      display:flex;
+      align-items:center;
+      padding:60px 8%;
     ">
       <div>
         <p style="color:#d4a017;font-weight:800;">EXPLORE. EXPERIENCE. REMEMBER.</p>
@@ -61,7 +83,11 @@ document.addEventListener("DOMContentLoaded", () => {
     <section style="padding:60px 8%;background:#f4f4f4;">
       <h2 style="text-align:center;font-size:42px;">Choose Your Peak Experience</h2>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;">
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+        gap:28px;
+      ">
         ${tours.map(t => `
           <div style="
             background:white;
@@ -69,7 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
             overflow:hidden;
             box-shadow:0 8px 24px rgba(0,0,0,.08);
           ">
-            <img src="${t.image}" style="width:100%;height:230px;object-fit:cover;">
+            <img src="${t.image}" style="
+              width:100%;
+              height:230px;
+              object-fit:cover;
+            ">
 
             <div style="padding:24px;">
               <h3 style="font-size:30px;">${t.name}</h3>
@@ -92,14 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
                   ? `
                 <label style="display:flex;align-items:center;gap:8px;margin:10px 0;">
                   <input type="checkbox" id="whistler-addon">
-                  Add Sea to Sky Gondola (+$60/person)
+                  Add Sea to Sky Gondola Upgrade
                 </label>
               `
                   : ""
               }
 
               <label>Date</label>
-              <input id="${t.id}-date" type="date" style="width:100%;padding:12px;margin:8px 0;">
+              <input type="date" id="${t.id}-date" style="width:100%;padding:12px;margin:8px 0;">
 
               <label>Time</label>
               <select id="${t.id}-time" style="width:100%;padding:12px;margin:8px 0;">
@@ -109,7 +139,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <option>3:00 PM</option>
               </select>
 
-              <div id="${t.id}-price" style="font-weight:800;margin:14px 0;"></div>
+              <div id="${t.id}-price" style="
+                font-weight:800;
+                margin:14px 0;
+                line-height:1.7;
+              "></div>
 
               <button data-id="${t.id}" style="
                 width:100%;
@@ -129,33 +163,38 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </section>
 
-    <section id="summary" style="display:none;padding:40px 8%;background:white;"></section>
+    <section id="summary" style="
+      display:none;
+      padding:40px 8%;
+      background:white;
+    "></section>
   `;
 
   tours.forEach(t => {
-    const guests = document.getElementById(`${t.id}-guests`);
+    const guestSelect = document.getElementById(`${t.id}-guests`);
     const priceBox = document.getElementById(`${t.id}-price`);
 
     function updatePrice() {
-      let base = t.price;
+      let basePrice = t.price;
 
       if (t.id === "whistler") {
         const addon = document.getElementById("whistler-addon");
         if (addon && addon.checked) {
-          base += t.seaAddOn;
+          basePrice = t.addonPrice;
         }
       }
 
-      const p = priceCalc(base, Number(guests.value));
+      const guests = parseInt(guestSelect.value);
+      const pricing = calculatePrice(basePrice, guests);
 
       priceBox.innerHTML = `
-        Original: $${p.original.toFixed(2)}<br>
-        Discount: -$${p.discount.toFixed(2)}<br>
-        Final Total: <span style="color:#b88700;">$${p.final.toFixed(2)}</span>
+        Original: $${pricing.original.toFixed(2)}<br>
+        Discount: -$${pricing.discount.toFixed(2)}<br>
+        Final Total: <span style="color:#b88700;">$${pricing.final.toFixed(2)}</span>
       `;
     }
 
-    guests.addEventListener("change", updatePrice);
+    guestSelect.addEventListener("change", updatePrice);
 
     if (t.id === "whistler") {
       const addon = document.getElementById("whistler-addon");
@@ -165,44 +204,46 @@ document.addEventListener("DOMContentLoaded", () => {
     updatePrice();
   });
 
-  document.querySelectorAll("button[data-id]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const t = tours.find(x => x.id === btn.dataset.id);
+  document.querySelectorAll("button[data-id]").forEach(button => {
+    button.addEventListener("click", () => {
+      const tour = tours.find(t => t.id === button.dataset.id);
 
-      const guests = Number(document.getElementById(`${t.id}-guests`).value);
-      const date = document.getElementById(`${t.id}-date`).value;
-      const time = document.getElementById(`${t.id}-time`).value;
+      const guests = parseInt(document.getElementById(`${tour.id}-guests`).value);
+      const date = document.getElementById(`${tour.id}-date`).value;
+      const time = document.getElementById(`${tour.id}-time`).value;
 
       if (!date || !time) {
         alert("Please select date and time first.");
         return;
       }
 
-      let base = t.price;
-      let addonText = "";
+      let selectedLink = tour.links[guests];
+      let tourLabel = tour.name;
+      let basePrice = tour.price;
 
-      if (t.id === "whistler") {
+      if (tour.id === "whistler") {
         const addon = document.getElementById("whistler-addon");
         if (addon && addon.checked) {
-          base += t.seaAddOn;
-          addonText = " + Sea to Sky Add-On";
+          selectedLink = tour.addonLinks[guests];
+          tourLabel = "Whistler + Sea to Sky Add-On";
+          basePrice = tour.addonPrice;
         }
       }
 
-      const p = priceCalc(base, guests);
+      const pricing = calculatePrice(basePrice, guests);
 
       const summary = document.getElementById("summary");
       summary.style.display = "block";
 
       summary.innerHTML = `
         <h2>Booking Summary</h2>
-        <p><b>Tour:</b> ${t.name}${addonText}</p>
+        <p><b>Tour:</b> ${tourLabel}</p>
         <p><b>Guests:</b> ${guests}</p>
         <p><b>Date:</b> ${date}</p>
         <p><b>Time:</b> ${time}</p>
-        <p><b>Final Total:</b> $${p.final.toFixed(2)}</p>
+        <p><b>Final Total:</b> $${pricing.final.toFixed(2)}</p>
 
-        <button onclick="window.location.href='${t.stripe}'" style="
+        <button onclick="window.location.href='${selectedLink}'" style="
           padding:16px 28px;
           background:#d4a017;
           border:none;
