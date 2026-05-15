@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.body.innerHTML = `
     <header style="padding:22px 8%;background:#071d35;color:white;font-weight:800;">
-      VANCOUVER <span style="color:#d4a017;">PEAK JOURNEY</span>
+      VANCOUVER <span style="color:#d4a017;">PEAKS JOURNEY</span>
     </header>
 
     <section style="background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.6)),url('/hero.jpg') center/cover;min-height:420px;color:white;display:flex;align-items:center;padding:60px 8%;">
