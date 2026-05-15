@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <section style="background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.6)),url('/hero.jpg') center/cover;min-height:420px;color:white;display:flex;align-items:center;padding:60px 8%;">
       <div>
         <p style="color:#d4a017;font-weight:800;">EXPLORE. EXPERIENCE. REMEMBER.</p>
-        <h1 style="font-size:58px;margin:0;">Vancouver Peak Journey</h1>
+        <h1 style="font-size:58px;margin:0;">Vancouver Peaks Journey</h1>
         <p style="font-size:20px;">Premium Vancouver attraction booking.</p>
       </div>
     </section>
