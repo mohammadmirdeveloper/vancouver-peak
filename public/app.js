@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const ADMIN_PASSWORD = "1234";
+
   const tours = [
     {
       id: "sea",
@@ -44,20 +46,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   ];
 
-  function calculatePrice(basePrice, guests) {
-    const original = basePrice * guests;
-    let discountRate = 0;
+  function calc(base, guests) {
+    const original = base * guests;
+    const rate = guests === 3 ? 0.08 : guests >= 4 ? 0.15 : 0;
+    const discount = original * rate;
+    return { original, discount, final: original - discount };
+  }
 
-    if (guests === 3) discountRate = 0.08;
-    if (guests >= 4) discountRate = 0.15;
+  function getOrders() {
+    return JSON.parse(localStorage.getItem("vpj_orders") || "[]");
+  }
 
-    const discount = original * discountRate;
+  function saveOrder(order) {
+    const orders = getOrders();
+    orders.push(order);
+    localStorage.setItem("vpj_orders", JSON.stringify(orders));
+  }
 
-    return {
-      original,
-      discount,
-      final: original - discount
-    };
+  function deleteOrder(index) {
+    const orders = getOrders();
+    orders.splice(index, 1);
+    localStorage.setItem("vpj_orders", JSON.stringify(orders));
+    renderAdmin();
+  }
+
+  function exportCSV() {
+    const orders = getOrders();
+    const rows = [["Tour", "Guests", "Date", "Time", "Total", "Created"]];
+    orders.forEach(o => rows.push([o.tour, o.guests, o.date, o.time, o.total, o.created]));
+    const csv = rows.map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "vancouver-peak-orders.csv";
+    a.click();
   }
 
   document.body.innerHTML = `
@@ -65,50 +87,24 @@ document.addEventListener("DOMContentLoaded", () => {
       VANCOUVER <span style="color:#d4a017;">PEAK JOURNEY</span>
     </header>
 
-    <section style="
-      background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('/hero.jpg') center/cover;
-      min-height:420px;
-      color:white;
-      display:flex;
-      align-items:center;
-      padding:60px 8%;
-    ">
+    <section style="background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('/hero.jpg') center/cover;min-height:420px;color:white;display:flex;align-items:center;padding:60px 8%;">
       <div>
         <p style="color:#d4a017;font-weight:800;">EXPLORE. EXPERIENCE. REMEMBER.</p>
-        <h1 style="font-size:64px;margin:0;">Vancouver Peak Journey</h1>
+        <h1 style="font-size:60px;margin:0;">Vancouver Peak Journey</h1>
         <p style="font-size:20px;">Premium Vancouver attraction booking.</p>
       </div>
     </section>
 
     <section style="padding:60px 8%;background:#f4f4f4;">
       <h2 style="text-align:center;font-size:42px;">Choose Your Peak Experience</h2>
-
-      <div style="
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-        gap:28px;
-      ">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;">
         ${tours.map(t => `
-          <div style="
-            background:white;
-            border-radius:20px;
-            overflow:hidden;
-            box-shadow:0 8px 24px rgba(0,0,0,.08);
-          ">
-            <img src="${t.image}" style="
-              width:100%;
-              height:230px;
-              object-fit:cover;
-            ">
-
+          <div style="background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);">
+            <img src="${t.image}" style="width:100%;height:230px;object-fit:cover;">
             <div style="padding:24px;">
-              <h3 style="font-size:30px;">${t.name}</h3>
+              <h3>${t.name}</h3>
               <p>${t.desc}</p>
-
-              <h3 style="color:#b88700;">
-                From $${t.price}/person
-                ${t.id === "whistler" ? `<br><span style="font-size:16px;color:#555;">+ Sea to Sky Add-On = $250/person</span>` : ""}
-              </h3>
+              <h3 style="color:#b88700;">From $${t.price}/person ${t.id==="whistler" ? "<br><small>+ Sea to Sky Add-On = $250/person</small>" : ""}</h3>
 
               <label>Guests</label>
               <select id="${t.id}-guests" style="width:100%;padding:12px;margin:8px 0;">
@@ -117,16 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <option value="4">4 Guests - 15% Off</option>
               </select>
 
-              ${
-                t.id === "whistler"
-                  ? `
-                <label style="display:flex;align-items:center;gap:8px;margin:10px 0;">
-                  <input type="checkbox" id="whistler-addon">
-                  Add Sea to Sky Gondola Upgrade
-                </label>
-              `
-                  : ""
-              }
+              ${t.id==="whistler" ? `<label><input type="checkbox" id="whistler-addon"> Add Sea to Sky Upgrade</label><br>` : ""}
 
               <label>Date</label>
               <input type="date" id="${t.id}-date" style="width:100%;padding:12px;margin:8px 0;">
@@ -139,22 +126,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <option>3:00 PM</option>
               </select>
 
-              <div id="${t.id}-price" style="
-                font-weight:800;
-                margin:14px 0;
-                line-height:1.7;
-              "></div>
+              <div id="${t.id}-price" style="font-weight:800;margin:14px 0;"></div>
 
-              <button data-id="${t.id}" style="
-                width:100%;
-                padding:16px;
-                background:#d4a017;
-                border:none;
-                border-radius:12px;
-                font-weight:800;
-                font-size:16px;
-                cursor:pointer;
-              ">
+              <button data-id="${t.id}" style="width:100%;padding:16px;background:#d4a017;border:none;border-radius:12px;font-weight:800;">
                 Review Booking
               </button>
             </div>
@@ -163,100 +137,111 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </section>
 
-    <section id="summary" style="
-      display:none;
-      padding:40px 8%;
-      background:white;
-    "></section>
+    <section id="summary" style="display:none;padding:40px 8%;background:white;"></section>
+
+    <button id="adminBtn" style="position:fixed;right:18px;bottom:18px;background:#071d35;color:white;border:none;border-radius:50px;padding:12px 18px;font-weight:800;z-index:999;">
+      Admin
+    </button>
+
+    <section id="adminPanel" style="display:none;padding:30px 8%;background:#071d35;color:white;"></section>
   `;
 
   tours.forEach(t => {
-    const guestSelect = document.getElementById(`${t.id}-guests`);
+    const guests = document.getElementById(`${t.id}-guests`);
     const priceBox = document.getElementById(`${t.id}-price`);
 
     function updatePrice() {
-      let basePrice = t.price;
-
-      if (t.id === "whistler") {
-        const addon = document.getElementById("whistler-addon");
-        if (addon && addon.checked) {
-          basePrice = t.addonPrice;
-        }
-      }
-
-      const guests = parseInt(guestSelect.value);
-      const pricing = calculatePrice(basePrice, guests);
-
-      priceBox.innerHTML = `
-        Original: $${pricing.original.toFixed(2)}<br>
-        Discount: -$${pricing.discount.toFixed(2)}<br>
-        Final Total: <span style="color:#b88700;">$${pricing.final.toFixed(2)}</span>
-      `;
+      let base = t.price;
+      if (t.id === "whistler" && document.getElementById("whistler-addon")?.checked) base = t.addonPrice;
+      const p = calc(base, Number(guests.value));
+      priceBox.innerHTML = `Original: $${p.original.toFixed(2)}<br>Discount: -$${p.discount.toFixed(2)}<br>Final Total: <span style="color:#b88700;">$${p.final.toFixed(2)}</span>`;
     }
 
-    guestSelect.addEventListener("change", updatePrice);
-
-    if (t.id === "whistler") {
-      const addon = document.getElementById("whistler-addon");
-      if (addon) addon.addEventListener("change", updatePrice);
-    }
-
+    guests.addEventListener("change", updatePrice);
+    if (t.id === "whistler") document.getElementById("whistler-addon").addEventListener("change", updatePrice);
     updatePrice();
   });
 
-  document.querySelectorAll("button[data-id]").forEach(button => {
-    button.addEventListener("click", () => {
-      const tour = tours.find(t => t.id === button.dataset.id);
+  document.querySelectorAll("button[data-id]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = tours.find(x => x.id === btn.dataset.id);
+      const guests = Number(document.getElementById(`${t.id}-guests`).value);
+      const date = document.getElementById(`${t.id}-date`).value;
+      const time = document.getElementById(`${t.id}-time`).value;
 
-      const guests = parseInt(document.getElementById(`${tour.id}-guests`).value);
-      const date = document.getElementById(`${tour.id}-date`).value;
-      const time = document.getElementById(`${tour.id}-time`).value;
+      if (!date || !time) return alert("Please select date and time first.");
 
-      if (!date || !time) {
-        alert("Please select date and time first.");
-        return;
+      let base = t.price;
+      let link = t.links[guests];
+      let label = t.name;
+
+      if (t.id === "whistler" && document.getElementById("whistler-addon")?.checked) {
+        base = t.addonPrice;
+        link = t.addonLinks[guests];
+        label = "Whistler + Sea to Sky Add-On";
       }
 
-      let selectedLink = tour.links[guests];
-      let tourLabel = tour.name;
-      let basePrice = tour.price;
+      const p = calc(base, guests);
 
-      if (tour.id === "whistler") {
-        const addon = document.getElementById("whistler-addon");
-        if (addon && addon.checked) {
-          selectedLink = tour.addonLinks[guests];
-          tourLabel = "Whistler + Sea to Sky Add-On";
-          basePrice = tour.addonPrice;
-        }
-      }
-
-      const pricing = calculatePrice(basePrice, guests);
-
-      const summary = document.getElementById("summary");
-      summary.style.display = "block";
-
-      summary.innerHTML = `
+      document.getElementById("summary").style.display = "block";
+      document.getElementById("summary").innerHTML = `
         <h2>Booking Summary</h2>
-        <p><b>Tour:</b> ${tourLabel}</p>
+        <p><b>Tour:</b> ${label}</p>
         <p><b>Guests:</b> ${guests}</p>
         <p><b>Date:</b> ${date}</p>
         <p><b>Time:</b> ${time}</p>
-        <p><b>Final Total:</b> $${pricing.final.toFixed(2)}</p>
-
-        <button onclick="window.location.href='${selectedLink}'" style="
-          padding:16px 28px;
-          background:#d4a017;
-          border:none;
-          border-radius:12px;
-          font-weight:800;
-          font-size:17px;
-          cursor:pointer;
-        ">
+        <p><b>Final Total:</b> $${p.final.toFixed(2)}</p>
+        <button id="payBtn" style="padding:16px 28px;background:#d4a017;border:none;border-radius:12px;font-weight:800;">
           Confirm & Go to Secure Payment
         </button>
       `;
 
-      summary.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("payBtn").onclick = () => {
+        saveOrder({
+          tour: label,
+          guests,
+          date,
+          time,
+          total: p.final.toFixed(2),
+          created: new Date().toLocaleString()
+        });
+        window.location.href = link;
+      };
+
+      document.getElementById("summary").scrollIntoView({ behavior: "smooth" });
     });
   });
+
+  function renderAdmin() {
+    const panel = document.getElementById("adminPanel");
+    const orders = getOrders();
+
+    panel.innerHTML = `
+      <h2>Admin Dashboard</h2>
+      <button onclick="window.exportCSV()" style="padding:10px 16px;margin-bottom:15px;">Export Excel / CSV</button>
+      ${orders.length === 0 ? "<p>No orders yet.</p>" : orders.map((o, i) => `
+        <div style="background:white;color:black;padding:15px;border-radius:12px;margin:10px 0;">
+          <b>${o.tour}</b><br>
+          Guests: ${o.guests}<br>
+          Date: ${o.date}<br>
+          Time: ${o.time}<br>
+          Total: $${o.total}<br>
+          Created: ${o.created}<br>
+          <button onclick="window.deleteOrder(${i})" style="margin-top:10px;background:#b00020;color:white;border:none;padding:8px 12px;border-radius:8px;">Delete</button>
+        </div>
+      `).join("")}
+    `;
+  }
+
+  document.getElementById("adminBtn").onclick = () => {
+    const pass = prompt("Admin password:");
+    if (pass !== ADMIN_PASSWORD) return alert("Wrong password");
+    const panel = document.getElementById("adminPanel");
+    panel.style.display = panel.style.display === "none" ? "block" : "none";
+    renderAdmin();
+    panel.scrollIntoView({ behavior: "smooth" });
+  };
+
+  window.deleteOrder = deleteOrder;
+  window.exportCSV = exportCSV;
 });
