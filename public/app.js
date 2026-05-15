@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const ADMIN_PASSWORD = "1234";
+  const ADMIN_PASSWORD = "9454";
+  const COMMISSION_RATE = 0.25;
 
   const tours = [
     {
@@ -46,6 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   ];
 
+  const giftCards = [
+    { amount: 100, label: "$100 Gift Card" },
+    { amount: 200, label: "$200 Gift Card" },
+    { amount: 300, label: "$300 Gift Card" }
+  ];
+
+  const giftCardLink = "#"; // بعداً لینک Stripe گیفت کارت را اینجا می‌گذاریم
+
   function calc(base, guests) {
     const original = base * guests;
     const rate = guests === 3 ? 0.08 : guests >= 4 ? 0.15 : 0;
@@ -57,29 +66,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return JSON.parse(localStorage.getItem("vpj_orders") || "[]");
   }
 
+  function setOrders(orders) {
+    localStorage.setItem("vpj_orders", JSON.stringify(orders));
+  }
+
+  function getAgents() {
+    return JSON.parse(localStorage.getItem("vpj_agents") || "[]");
+  }
+
+  function setAgents(agents) {
+    localStorage.setItem("vpj_agents", JSON.stringify(agents));
+  }
+
   function saveOrder(order) {
     const orders = getOrders();
     orders.push(order);
-    localStorage.setItem("vpj_orders", JSON.stringify(orders));
-  }
-
-  function deleteOrder(index) {
-    const orders = getOrders();
-    orders.splice(index, 1);
-    localStorage.setItem("vpj_orders", JSON.stringify(orders));
-    renderAdmin();
-  }
-
-  function exportCSV() {
-    const orders = getOrders();
-    const rows = [["Tour", "Guests", "Date", "Time", "Total", "Created"]];
-    orders.forEach(o => rows.push([o.tour, o.guests, o.date, o.time, o.total, o.created]));
-    const csv = rows.map(r => r.join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "vancouver-peak-orders.csv";
-    a.click();
+    setOrders(orders);
   }
 
   document.body.innerHTML = `
@@ -126,6 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <option>3:00 PM</option>
               </select>
 
+              <label>Agent / Promo Code</label>
+              <input id="${t.id}-agent" placeholder="Optional" style="width:100%;padding:12px;margin:8px 0;">
+
               <div id="${t.id}-price" style="font-weight:800;margin:14px 0;"></div>
 
               <button data-id="${t.id}" style="width:100%;padding:16px;background:#d4a017;border:none;border-radius:12px;font-weight:800;">
@@ -133,6 +138,18 @@ document.addEventListener("DOMContentLoaded", () => {
               </button>
             </div>
           </div>
+        `).join("")}
+      </div>
+    </section>
+
+    <section style="padding:50px 8%;background:white;">
+      <h2>Gift Cards</h2>
+      <p>Give someone a Vancouver Peak Journey experience.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        ${giftCards.map(g => `
+          <button onclick="window.buyGiftCard(${g.amount})" style="padding:14px 22px;background:#071d35;color:white;border:none;border-radius:12px;font-weight:800;">
+            ${g.label}
+          </button>
         `).join("")}
       </div>
     </section>
@@ -168,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const guests = Number(document.getElementById(`${t.id}-guests`).value);
       const date = document.getElementById(`${t.id}-date`).value;
       const time = document.getElementById(`${t.id}-time`).value;
+      const agentCode = document.getElementById(`${t.id}-agent`).value.trim().toUpperCase();
 
       if (!date || !time) return alert("Please select date and time first.");
 
@@ -182,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const p = calc(base, guests);
+      const commission = agentCode ? p.final * COMMISSION_RATE : 0;
 
       document.getElementById("summary").style.display = "block";
       document.getElementById("summary").innerHTML = `
@@ -190,7 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <p><b>Guests:</b> ${guests}</p>
         <p><b>Date:</b> ${date}</p>
         <p><b>Time:</b> ${time}</p>
+        <p><b>Agent Code:</b> ${agentCode || "None"}</p>
         <p><b>Final Total:</b> $${p.final.toFixed(2)}</p>
+
         <button id="payBtn" style="padding:16px 28px;background:#d4a017;border:none;border-radius:12px;font-weight:800;">
           Confirm & Go to Secure Payment
         </button>
@@ -203,6 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
           date,
           time,
           total: p.final.toFixed(2),
+          agentCode: agentCode || "",
+          commission: commission.toFixed(2),
           created: new Date().toLocaleString()
         });
         window.location.href = link;
@@ -215,10 +238,28 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderAdmin() {
     const panel = document.getElementById("adminPanel");
     const orders = getOrders();
+    const agents = getAgents();
 
     panel.innerHTML = `
       <h2>Admin Dashboard</h2>
+
+      <h3>Agent / Promo Codes</h3>
+      <input id="newAgentCode" placeholder="Example: HOTEL01" style="padding:10px;border-radius:8px;border:none;">
+      <input id="newAgentName" placeholder="Agent name" style="padding:10px;border-radius:8px;border:none;">
+      <button onclick="window.addAgent()" style="padding:10px 14px;">Add Code</button>
+
+      <div style="margin:15px 0;">
+        ${agents.length === 0 ? "<p>No agent codes yet.</p>" : agents.map((a, i) => `
+          <div style="background:white;color:black;padding:10px;border-radius:10px;margin:8px 0;">
+            <b>${a.code}</b> - ${a.name}
+            <button onclick="window.deleteAgent(${i})" style="float:right;background:#b00020;color:white;border:none;border-radius:8px;padding:6px 10px;">Delete</button>
+          </div>
+        `).join("")}
+      </div>
+
+      <h3>Orders</h3>
       <button onclick="window.exportCSV()" style="padding:10px 16px;margin-bottom:15px;">Export Excel / CSV</button>
+
       ${orders.length === 0 ? "<p>No orders yet.</p>" : orders.map((o, i) => `
         <div style="background:white;color:black;padding:15px;border-radius:12px;margin:10px 0;">
           <b>${o.tour}</b><br>
@@ -226,12 +267,57 @@ document.addEventListener("DOMContentLoaded", () => {
           Date: ${o.date}<br>
           Time: ${o.time}<br>
           Total: $${o.total}<br>
+          Agent Code: ${o.agentCode || "None"}<br>
+          Commission: $${o.commission || "0.00"}<br>
           Created: ${o.created}<br>
           <button onclick="window.deleteOrder(${i})" style="margin-top:10px;background:#b00020;color:white;border:none;padding:8px 12px;border-radius:8px;">Delete</button>
         </div>
       `).join("")}
     `;
   }
+
+  window.addAgent = function() {
+    const code = document.getElementById("newAgentCode").value.trim().toUpperCase();
+    const name = document.getElementById("newAgentName").value.trim();
+
+    if (!code) return alert("Enter agent code.");
+
+    const agents = getAgents();
+    agents.push({ code, name });
+    setAgents(agents);
+    renderAdmin();
+  };
+
+  window.deleteAgent = function(index) {
+    const agents = getAgents();
+    agents.splice(index, 1);
+    setAgents(agents);
+    renderAdmin();
+  };
+
+  window.deleteOrder = function(index) {
+    const orders = getOrders();
+    orders.splice(index, 1);
+    setOrders(orders);
+    renderAdmin();
+  };
+
+  window.exportCSV = function() {
+    const orders = getOrders();
+    const rows = [["Tour", "Guests", "Date", "Time", "Total", "Agent Code", "Commission", "Created"]];
+    orders.forEach(o => rows.push([o.tour, o.guests, o.date, o.time, o.total, o.agentCode || "", o.commission || "0.00", o.created]));
+    const csv = rows.map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "vancouver-peak-orders.csv";
+    a.click();
+  };
+
+  window.buyGiftCard = function(amount) {
+    alert(`Gift Card $${amount} selected. Add Stripe gift card link later.`);
+    if (giftCardLink !== "#") window.location.href = giftCardLink;
+  };
 
   document.getElementById("adminBtn").onclick = () => {
     const pass = prompt("Admin password:");
@@ -241,7 +327,4 @@ document.addEventListener("DOMContentLoaded", () => {
     renderAdmin();
     panel.scrollIntoView({ behavior: "smooth" });
   };
-
-  window.deleteOrder = deleteOrder;
-  window.exportCSV = exportCSV;
 });
