@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const ADMIN_CODE = "9454";
-  const WHATSAPP_NUMBER = "17786819140";
-  const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20Vancouver%20Peak%20Journey%2C%20I%20need%20help%20with%20my%20booking.`;
+  const WHATSAPP_LINK =
+    "https://wa.me/17786819140?text=Hi%20Vancouver%20Peaks%20Journey%2C%20I%20need%20help%20with%20my%20booking.";
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -53,23 +53,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   ];
 
-  function calc(price, guests) {
-    const original = price * guests;
-    const rate = guests === 3 ? 0.08 : guests === 4 ? 0.15 : 0;
-    const discount = original * rate;
-    return {
-      original,
-      discount,
-      final: original - discount
-    };
-  }
-
   function getOrders() {
     return JSON.parse(localStorage.getItem("vpj_orders") || "[]");
   }
 
   function saveOrders(orders) {
     localStorage.setItem("vpj_orders", JSON.stringify(orders));
+  }
+
+  function getAgents() {
+    return JSON.parse(localStorage.getItem("vpj_agents") || "[]");
+  }
+
+  function saveAgents(agents) {
+    localStorage.setItem("vpj_agents", JSON.stringify(agents));
+  }
+
+  function getGiftCards() {
+    return JSON.parse(localStorage.getItem("vpj_giftcards") || "[]");
+  }
+
+  function saveGiftCards(cards) {
+    localStorage.setItem("vpj_giftcards", JSON.stringify(cards));
+  }
+
+  function calc(price, guests) {
+    const original = price * guests;
+    const rate = guests === 3 ? 0.08 : guests === 4 ? 0.15 : 0;
+    const discount = original * rate;
+    const final = original - discount;
+    return { original, discount, final };
   }
 
   if (location.pathname.includes("success")) {
@@ -89,8 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.innerHTML = `
       <div style="font-family:Arial;text-align:center;padding:60px;">
         <h1>Payment Successful ✅</h1>
-        <p>Your booking is confirmed.</p>
-        <p>We will contact you shortly.</p>
+        <p>Thank you for booking with Vancouver Peaks Journey!</p>
+        <p>Your reservation is confirmed.</p>
+        <p>We will contact you shortly via email or WhatsApp.</p>
         <a href="/" style="display:inline-block;margin-top:20px;padding:14px 24px;background:#071d35;color:white;text-decoration:none;border-radius:10px;">Return Home</a>
       </div>
     `;
@@ -106,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div>
         <p style="color:#d4a017;font-weight:800;">EXPLORE. EXPERIENCE. REMEMBER.</p>
         <h1 style="font-size:58px;margin:0;">Vancouver Peaks Journey</h1>
-        <p style="font-size:20px;">Premium Vancouver attraction booking.</p>
+        <p style="font-size:20px;">Experience Vancouver with my personal recommendation and create one of your most unforgettable journeys.</p>
       </div>
     </section>
 
@@ -132,7 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   tours.forEach(t => {
     const card = document.createElement("div");
-    card.style.cssText = "background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);";
+    card.style.cssText =
+      "background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);";
 
     card.innerHTML = `
       <img src="${t.image}" style="width:100%;height:230px;object-fit:cover;">
@@ -210,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const date = card.querySelector(".date").value;
       const time = card.querySelector(".time").value;
       const agent = card.querySelector(".agent").value.trim().toUpperCase();
-      const gift = card.querySelector(".gift").value.trim();
+      const gift = card.querySelector(".gift").value.trim().toUpperCase();
 
       if (!name || !email || !phone) {
         alert("Please enter Full Name, Email, and Phone Number.");
@@ -233,6 +248,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const p = calc(base, guests);
+      const giftCards = getGiftCards();
+      const giftFound = giftCards.find(g => g.code === gift);
+      const agents = getAgents();
+      const agentFound = agents.find(a => a.code === agent);
 
       const summary = document.getElementById("summary");
       summary.style.display = "block";
@@ -245,8 +264,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <p><b>Guests:</b> ${guests}</p>
         <p><b>Date:</b> ${date}</p>
         <p><b>Time:</b> ${time}</p>
-        <p><b>Agent Code:</b> ${agent || "None"}</p>
-        <p><b>Gift Card:</b> ${gift || "None"}</p>
+        <p><b>Agent Code:</b> ${agent || "None"} ${agent && !agentFound ? "(not registered yet)" : ""}</p>
+        <p><b>Gift Card:</b> ${gift || "None"} ${gift && giftFound ? "(valid)" : gift ? "(not registered)" : ""}</p>
         <p><b>Final Total:</b> $${p.final.toFixed(2)}</p>
 
         <button id="payNow" style="padding:16px 28px;background:#d4a017;border:none;border-radius:12px;font-weight:800;font-size:17px;">
@@ -265,7 +284,9 @@ document.addEventListener("DOMContentLoaded", () => {
           time,
           total: p.final.toFixed(2),
           agentCode: agent,
+          agentName: agentFound ? agentFound.name : "",
           giftCard: gift,
+          giftAmount: giftFound ? giftFound.amount : "",
           commission: agent ? (p.final * 0.25).toFixed(2) : "0.00"
         }));
 
@@ -278,11 +299,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderAdmin() {
     const orders = getOrders();
+    const agents = getAgents();
+    const giftCards = getGiftCards();
     const panel = document.getElementById("adminPanel");
 
     panel.innerHTML = `
       <h2>Admin Dashboard</h2>
+
+      <h3>Agent / Promo Codes</h3>
+      <input id="newAgentCode" placeholder="Code e.g. HOTELA" style="padding:10px;margin:5px;width:200px;">
+      <input id="newAgentName" placeholder="Agent name" style="padding:10px;margin:5px;width:200px;">
+      <button id="addAgent" style="padding:10px 16px;">Add Agent</button>
+
+      <div style="margin:15px 0;">
+        ${agents.length === 0 ? "<p>No agent codes yet.</p>" : agents.map((a, i) => `
+          <div style="background:white;color:black;padding:12px;border-radius:10px;margin:8px 0;">
+            <b>${a.code}</b> — ${a.name}
+            <button data-agent-delete="${i}" style="float:right;background:#b00020;color:white;border:none;border-radius:8px;padding:6px 10px;">Delete</button>
+          </div>
+        `).join("")}
+      </div>
+
+      <h3>Gift Card Codes</h3>
+      <input id="newGiftCode" placeholder="Gift code e.g. GIFT100" style="padding:10px;margin:5px;width:200px;">
+      <input id="newGiftAmount" placeholder="Amount e.g. 100" type="number" style="padding:10px;margin:5px;width:160px;">
+      <button id="addGift" style="padding:10px 16px;">Add Gift Card</button>
+
+      <div style="margin:15px 0;">
+        ${giftCards.length === 0 ? "<p>No gift cards yet.</p>" : giftCards.map((g, i) => `
+          <div style="background:white;color:black;padding:12px;border-radius:10px;margin:8px 0;">
+            <b>${g.code}</b> — $${g.amount}
+            <button data-gift-delete="${i}" style="float:right;background:#b00020;color:white;border:none;border-radius:8px;padding:6px 10px;">Delete</button>
+          </div>
+        `).join("")}
+      </div>
+
+      <h3>Orders</h3>
       <button id="exportCSV" style="padding:10px 16px;margin-bottom:15px;">Export CSV / Excel</button>
+
       ${orders.length === 0 ? "<p>No orders yet.</p>" : orders.map((o, i) => `
         <div style="background:white;color:black;padding:15px;border-radius:12px;margin:10px 0;">
           <b>${o.tour}</b><br>
@@ -294,8 +348,10 @@ document.addEventListener("DOMContentLoaded", () => {
           Time: ${o.time}<br>
           Total: $${o.total}<br>
           Agent Code: ${o.agentCode || "None"}<br>
+          Agent Name: ${o.agentName || "None"}<br>
           Commission: $${o.commission || "0.00"}<br>
           Gift Card: ${o.giftCard || "None"}<br>
+          Gift Amount: ${o.giftAmount ? "$" + o.giftAmount : "None"}<br>
           Status: ${o.status || "Paid"}<br>
           Created: ${o.created || ""}<br>
           <button data-delete="${i}" style="margin-top:10px;background:#b00020;color:white;border:none;padding:8px 12px;border-radius:8px;">Delete</button>
@@ -303,19 +359,45 @@ document.addEventListener("DOMContentLoaded", () => {
       `).join("")}
     `;
 
-    document.getElementById("exportCSV").onclick = () => {
-      const rows = [["Name","Email","Phone","Tour","Guests","Date","Time","Total","Agent Code","Commission","Gift Card","Status","Created"]];
-      getOrders().forEach(o => rows.push([
-        o.name,o.email,o.phone,o.tour,o.guests,o.date,o.time,o.total,o.agentCode || "",o.commission || "0.00",o.giftCard || "",o.status || "Paid",o.created || ""
-      ]));
+    document.getElementById("addAgent").onclick = () => {
+      const code = document.getElementById("newAgentCode").value.trim().toUpperCase();
+      const name = document.getElementById("newAgentName").value.trim();
+      if (!code) return alert("Enter agent code.");
 
-      const csv = rows.map(r => r.map(x => `"${x}"`).join(",")).join("\n");
-      const blob = new Blob([csv], { type: "text/csv" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "vancouver-peak-orders.csv";
-      a.click();
+      const list = getAgents();
+      list.push({ code, name });
+      saveAgents(list);
+      renderAdmin();
     };
+
+    document.getElementById("addGift").onclick = () => {
+      const code = document.getElementById("newGiftCode").value.trim().toUpperCase();
+      const amount = document.getElementById("newGiftAmount").value.trim();
+      if (!code || !amount) return alert("Enter gift code and amount.");
+
+      const list = getGiftCards();
+      list.push({ code, amount });
+      saveGiftCards(list);
+      renderAdmin();
+    };
+
+    panel.querySelectorAll("[data-agent-delete]").forEach(btn => {
+      btn.onclick = () => {
+        const list = getAgents();
+        list.splice(Number(btn.dataset.agentDelete), 1);
+        saveAgents(list);
+        renderAdmin();
+      };
+    });
+
+    panel.querySelectorAll("[data-gift-delete]").forEach(btn => {
+      btn.onclick = () => {
+        const list = getGiftCards();
+        list.splice(Number(btn.dataset.giftDelete), 1);
+        saveGiftCards(list);
+        renderAdmin();
+      };
+    });
 
     panel.querySelectorAll("[data-delete]").forEach(btn => {
       btn.onclick = () => {
@@ -325,6 +407,20 @@ document.addEventListener("DOMContentLoaded", () => {
         renderAdmin();
       };
     });
+
+    document.getElementById("exportCSV").onclick = () => {
+      const rows = [["Name","Email","Phone","Tour","Guests","Date","Time","Total","Agent Code","Agent Name","Commission","Gift Card","Gift Amount","Status","Created"]];
+      getOrders().forEach(o => rows.push([
+        o.name,o.email,o.phone,o.tour,o.guests,o.date,o.time,o.total,o.agentCode || "",o.agentName || "",o.commission || "0.00",o.giftCard || "",o.giftAmount || "",o.status || "Paid",o.created || ""
+      ]));
+
+      const csv = rows.map(r => r.map(x => `"${x}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "vancouver-peaks-orders.csv";
+      a.click();
+    };
   }
 
   document.getElementById("adminBtn").onclick = () => {
