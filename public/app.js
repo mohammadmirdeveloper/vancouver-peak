@@ -3,7 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const WHATSAPP_LINK =
     "https://wa.me/17786819140?text=Hi%20Vancouver%20Peaks%20Journey%2C%20I%20need%20help%20with%20my%20booking.";
 
-  const today = new Date().toISOString().split("T")[0];
+  const now = new Date();
+const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  .toLocaleDateString("en-CA");
 
   const STRIPE_LINKS = {
     sea: {
