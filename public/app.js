@@ -161,7 +161,6 @@ if (location.pathname.includes("success")) {
       <hr>
 
       <p>We will contact you shortly via email or WhatsApp.</p>
-      <p><b>WhatsApp:</b> +1 778 681 9140</p>
 
       <button onclick="window.print()" style="padding:14px 24px;background:#d4a017;color:black;border:none;border-radius:10px;font-weight:bold;">
         Download / Save Ticket as PDF
