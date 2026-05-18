@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const ADMIN_CODE = "9454";
   const WHATSAPP_LINK =
     "https://wa.me/17786819140?text=Hi%20Vancouver%20Peaks%20Journey%2C%20I%20need%20help%20with%20my%20booking.";
-
+const SUPABASE_URL = "https://fmzyvslflsngnorpmuju.supabase.co";
+const SUPABASE_KEY = "sb_publishable_RTM95bE519jtHrELvHSwrQ_FuTR7Ehg";
+  
   const now = new Date();
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   .toLocaleDateString("en-CA");
