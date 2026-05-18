@@ -1,11 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Successful</title>
- <script src="/app.js" defer></script>
+  <title>Vancouver Peaks Journey Ticket</title>
+  <script src="/app.js" defer></script>
+  <style>
+    body { font-family: Arial; background:#f4f4f4; padding:30px; }
+    .ticket {
+      max-width: 650px; margin:auto; background:white; padding:30px;
+      border-radius:18px; border:2px solid #d4a017;
+    }
+    h1 { color:#071d35; }
+    .brand { color:#d4a017; font-weight:800; }
+    button {
+      padding:14px 22px; background:#071d35; color:white;
+      border:none; border-radius:10px; font-weight:bold; margin-top:20px;
+    }
+    @media print { button { display:none; } body { background:white; } }
+  </style>
 </head>
 <body>
+  <div class="ticket">
+    <div class="brand">VANCOUVER PEAKS JOURNEY</div>
+    <h1>Booking Confirmed ✅</h1>
+
+    <p>Your payment was successful.</p>
+    <p>This is your booking confirmation ticket.</p>
+
+    <hr>
+
+    <p><b>Important:</b> We will contact you shortly by email or WhatsApp to confirm pickup details.</p>
+    <p><b>WhatsApp:</b> +1 778 681 9140</p>
+
+    <button onclick="window.print()">Download / Save Ticket as PDF</button>
+    <br><br>
+    <a href="/">Return Home</a>
+  </div>
 </body>
 </html>
