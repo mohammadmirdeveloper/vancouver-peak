@@ -64,6 +64,36 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   function saveOrders(orders) {
     localStorage.setItem("vpj_orders", JSON.stringify(orders));
   }
+  async function saveBookingToSupabase(order) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
+    method: "POST",
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "return=minimal"
+    },
+    body: JSON.stringify({
+      name: order.name,
+      email: order.email,
+      phone: order.phone,
+      tour: order.tour,
+      guests: order.guests,
+      tour_date: order.date,
+      tour_time: order.time,
+      total: order.total,
+      agent_code: order.agentCode,
+      agent_name: order.agentName,
+      commission: order.commission,
+      gift_card: order.giftCard,
+      status: "paid"
+    })
+  });
+
+  if (!response.ok) {
+    console.error("Supabase save failed", await response.text());
+  }
+}
 
   function getAgents() {
     return JSON.parse(localStorage.getItem("vpj_agents") || "[]");
