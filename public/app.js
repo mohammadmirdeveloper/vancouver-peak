@@ -129,6 +129,11 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
         status: "Paid",
         created: new Date().toLocaleString()
       });
+      saveBookingToSupabase({
+  ...pending,
+  status: "Paid",
+  created: new Date().toLocaleString()
+});
       saveOrders(orders);
       localStorage.removeItem("pending_order");
     }
