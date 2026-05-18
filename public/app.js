@@ -118,37 +118,66 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const final = original - discount;
     return { original, discount, final };
   }
+if (location.pathname.includes("success")) {
+  const pending = JSON.parse(localStorage.getItem("pending_order") || "null");
 
-  if (location.pathname.includes("success")) {
-    const pending = JSON.parse(localStorage.getItem("pending_order") || "null");
+  let ticket = pending || {};
 
-    if (pending) {
-      const orders = getOrders();
-      orders.push({
-        ...pending,
-        status: "Paid",
-        created: new Date().toLocaleString()
-      });
-      saveBookingToSupabase({
-  ...pending,
-  status: "Paid",
-  created: new Date().toLocaleString()
-});
-      saveOrders(orders);
-      localStorage.removeItem("pending_order");
-    }
+  if (pending) {
+    const orders = getOrders();
 
-    document.body.innerHTML = `
-      <div style="font-family:Arial;text-align:center;padding:60px;">
-        <h1>Payment Successful ✅</h1>
-        <p>Thank you for booking with Vancouver Peaks Journey!</p>
-        <p>Your reservation is confirmed.</p>
-        <p>We will contact you shortly via email or WhatsApp.</p>
-        <button onclick="window.print()" style="display:inline-block;margin-top:20px;padding:14px 24px;background:#d4a017;color:black;border:none;border-radius:10px;font-weight:bold;">Download / Save Ticket as PDF</button><br><br><a href="/" style="display:inline-block;margin-top:20px;padding:14px 24px;background:#071d35;color:white;text-decoration:none;border-radius:10px;">Return Home</a>
-      </div>
-    `;
-    return;
+    const confirmedOrder = {
+      ...pending,
+      status: "Paid",
+      created: new Date().toLocaleString()
+    };
+
+    orders.push(confirmedOrder);
+    saveBookingToSupabase(confirmedOrder);
+    saveOrders(orders);
+
+    ticket = confirmedOrder;
+
+    localStorage.removeItem("pending_order");
   }
+
+  document.body.innerHTML = `
+    <div style="font-family:Arial;max-width:700px;margin:40px auto;padding:35px;border:2px solid #d4a017;border-radius:18px;text-align:center;">
+      <h2 style="color:#d4a017;">Vancouver Peaks Journey Ticket</h2>
+      <h1>Booking Confirmed ✅</h1>
+
+      <hr>
+
+      <p><b>Name:</b> ${ticket.name || ""}</p>
+      <p><b>Email:</b> ${ticket.email || ""}</p>
+      <p><b>Phone:</b> ${ticket.phone || ""}</p>
+      <p><b>Tour:</b> ${ticket.tour || ""}</p>
+      <p><b>Guests:</b> ${ticket.guests || ""}</p>
+      <p><b>Date:</b> ${ticket.date || ""}</p>
+      <p><b>Time:</b> ${ticket.time || ""}</p>
+      <p><b>Total Paid:</b> $${ticket.total || ""}</p>
+      <p><b>Status:</b> Paid</p>
+
+      <hr>
+
+      <p>We will contact you shortly via email or WhatsApp.</p>
+      <p><b>WhatsApp:</b> +1 778 681 9140</p>
+
+      <button onclick="window.print()" style="padding:14px 24px;background:#d4a017;color:black;border:none;border-radius:10px;font-weight:bold;">
+        Download / Save Ticket as PDF
+      </button>
+
+      <br><br>
+
+      <a href="/" style="display:inline-block;padding:14px 24px;background:#071d35;color:white;text-decoration:none;border-radius:10px;">
+        Return Home
+      </a>
+    </div>
+  `;
+
+  return;
+}
+  
 
   document.body.innerHTML = `
     <header style="padding:22px 8%;background:#071d35;color:white;font-weight:800;">
