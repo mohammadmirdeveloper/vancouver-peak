@@ -423,13 +423,18 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     };
   }
 
-  document.getElementById("adminBtn").onclick = () => {
+ if (location.hash === "#admin") {
+  setTimeout(() => {
     const pass = prompt("Admin password:");
-    if (pass !== ADMIN_CODE) return alert("Wrong password");
+    if (pass !== ADMIN_CODE) {
+      alert("Wrong password");
+      return;
+    }
 
     const panel = document.getElementById("adminPanel");
-    panel.style.display = panel.style.display === "none" ? "block" : "none";
+    panel.style.display = "block";
     renderAdmin();
     panel.scrollIntoView({ behavior: "smooth" });
-  };
+  }, 300);
+}
 });
