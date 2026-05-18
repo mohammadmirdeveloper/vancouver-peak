@@ -144,7 +144,7 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
         <p>Thank you for booking with Vancouver Peaks Journey!</p>
         <p>Your reservation is confirmed.</p>
         <p>We will contact you shortly via email or WhatsApp.</p>
-        <a href="/" style="display:inline-block;margin-top:20px;padding:14px 24px;background:#071d35;color:white;text-decoration:none;border-radius:10px;">Return Home</a>
+        <button onclick="window.print()" style="display:inline-block;margin-top:20px;padding:14px 24px;background:#d4a017;color:black;border:none;border-radius:10px;font-weight:bold;">Download / Save Ticket as PDF</button><br><br><a href="/" style="display:inline-block;margin-top:20px;padding:14px 24px;background:#071d35;color:white;text-decoration:none;border-radius:10px;">Return Home</a>
       </div>
     `;
     return;
