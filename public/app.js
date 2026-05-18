@@ -137,9 +137,7 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
       WhatsApp
     </a>
 
-    <button id="adminBtn" style="position:fixed;right:18px;bottom:22px;background:#071d35;color:white;border:none;border-radius:30px;padding:13px 18px;font-weight:800;z-index:9999;">
-      Admin
-    </button>
+   
 
     <section id="adminPanel" style="display:none;padding:35px 8%;background:#071d35;color:white;"></section>
   `;
