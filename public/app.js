@@ -209,158 +209,52 @@ if (location.pathname.includes("success")) {
 
   const grid = document.getElementById("tourGrid");
 
-  tours.forEach(t => {
-    const card = document.createElement("div");
-    card.style.cssText =
-      "background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);";
+ tours.forEach(t => {
+  const card = document.createElement("div");
 
-    card.innerHTML = `
-      <img src="${t.image}" style="width:100%;height:230px;object-fit:cover;">
-      <div style="padding:24px;">
-        <h3 style="font-size:28px;">${t.name}</h3>
-        <p>${t.desc}</p>
-        <h3 style="color:#b88700;">From $${t.price}/person ${t.id === "whistler" ? "<br><small>+ Sea to Sky Add-On = $250/person</small>" : ""}</h3>
+  card.style.cssText =
+    "background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);";
 
-        <input class="name" placeholder="Full Name *" style="width:100%;padding:12px;margin:7px 0;">
-        <input class="email" type="email" placeholder="Email Address *" style="width:100%;padding:12px;margin:7px 0;">
-        <input class="phone" type="tel" placeholder="Phone / WhatsApp Number *" style="width:100%;padding:12px;margin:7px 0;">
+  card.innerHTML = `
+    <img src="${t.image}" style="width:100%;height:240px;object-fit:cover;">
 
-        <label>Guests</label>
-        <select class="guests" style="width:100%;padding:12px;margin:7px 0;">
-          <option value="2">2 Guests</option>
-          <option value="3">3 Guests - 8% Off</option>
-          <option value="4">4 Guests - 15% Off</option>
-        </select>
+    <div style="padding:24px;">
+      <h3 style="font-size:30px;margin-bottom:10px;">
+        ${t.name}
+      </h3>
 
-        ${t.id === "whistler" ? `
-          <label style="display:block;margin:10px 0;">
-            <input type="checkbox" class="addon"> Add Sea to Sky Upgrade
-          </label>
-        ` : ""}
+      <p style="color:#555;line-height:1.6;">
+        ${t.desc}
+      </p>
 
-        <label>Date</label>
-        <input class="date" type="date" min="${today}" style="width:100%;padding:12px;margin:7px 0;">
+      <h3 style="color:#b88700;margin-top:18px;">
+        From $${t.price}/person
+      </h3>
 
-        <label>Time</label>
-        <select class="time" style="width:100%;padding:12px;margin:7px 0;">
-          <option value="">Select time</option>
-          <option>9:00 AM</option>
-          <option>12:00 PM</option>
-          <option>3:00 PM</option>
-        </select>
-
-        <input class="agent" placeholder="Agent / Promo Code" style="width:100%;padding:12px;margin:7px 0;">
-        <input class="gift" placeholder="Gift Card Code" style="width:100%;padding:12px;margin:7px 0;">
-
-        <div class="price" style="font-weight:800;margin:14px 0;line-height:1.7;"></div>
-
-        <button class="review" style="width:100%;padding:16px;background:#d4a017;border:none;border-radius:12px;font-weight:800;font-size:16px;">
-          Review Booking
-        </button>
-      </div>
-    `;
-
-    grid.appendChild(card);
-
-    const guestsEl = card.querySelector(".guests");
-    const addonEl = card.querySelector(".addon");
-    const priceEl = card.querySelector(".price");
-
-    function updatePrice() {
-      let base = t.price;
-      if (t.id === "whistler" && addonEl && addonEl.checked) base = t.addonPrice;
-
-      const p = calc(base, Number(guestsEl.value));
-      priceEl.innerHTML = `
-        Original: $${p.original.toFixed(2)}<br>
-        Discount: -$${p.discount.toFixed(2)}<br>
-        Final Total: <span style="color:#b88700;">$${p.final.toFixed(2)}</span>
-      `;
-    }
-
-    guestsEl.addEventListener("change", updatePrice);
-    if (addonEl) addonEl.addEventListener("change", updatePrice);
-    updatePrice();
-
-    card.querySelector(".review").onclick = () => {
-      const name = card.querySelector(".name").value.trim();
-      const email = card.querySelector(".email").value.trim();
-      const phone = card.querySelector(".phone").value.trim();
-      const guests = Number(guestsEl.value);
-      const date = card.querySelector(".date").value;
-      const time = card.querySelector(".time").value;
-      const agent = card.querySelector(".agent").value.trim().toUpperCase();
-      const gift = card.querySelector(".gift").value.trim().toUpperCase();
-
-      if (!name || !email || !phone) {
-        alert("Please enter Full Name, Email, and Phone Number.");
-        return;
+      ${
+        t.id === "whistler"
+          ? `<p style="color:#555;">+ Sea to Sky Add-On Available</p>`
+          : ""
       }
 
-      if (!date || !time) {
-        alert("Please select Date and Time.");
-        return;
-      }
+      <a href="/${t.id}.html"
+        style="
+          display:inline-block;
+          margin-top:20px;
+          padding:14px 22px;
+          background:#071d35;
+          color:white;
+          text-decoration:none;
+          border-radius:12px;
+          font-weight:700;
+        ">
+        View Details & Book
+      </a>
+    </div>
+  `;
 
-      let base = t.price;
-      let tourName = t.name;
-      let link = STRIPE_LINKS[t.id][guests];
-
-      if (t.id === "whistler" && addonEl && addonEl.checked) {
-        base = t.addonPrice;
-        tourName = "Whistler + Sea to Sky Add-On";
-        link = STRIPE_LINKS.addon[guests];
-      }
-
-      const p = calc(base, guests);
-      const giftCards = getGiftCards();
-      const giftFound = giftCards.find(g => g.code === gift);
-      const agents = getAgents();
-      const agentFound = agents.find(a => a.code === agent);
-
-      const summary = document.getElementById("summary");
-      summary.style.display = "block";
-      summary.innerHTML = `
-        <h2>Booking Summary</h2>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Phone:</b> ${phone}</p>
-        <p><b>Tour:</b> ${tourName}</p>
-        <p><b>Guests:</b> ${guests}</p>
-        <p><b>Date:</b> ${date}</p>
-        <p><b>Time:</b> ${time}</p>
-        <p><b>Agent Code:</b> ${agent || "None"} ${agent && !agentFound ? "(not registered yet)" : ""}</p>
-        <p><b>Gift Card:</b> ${gift || "None"} ${gift && giftFound ? "(valid)" : gift ? "(not registered)" : ""}</p>
-        <p><b>Final Total:</b> $${p.final.toFixed(2)}</p>
-
-        <button id="payNow" style="padding:16px 28px;background:#d4a017;border:none;border-radius:12px;font-weight:800;font-size:17px;">
-          Confirm & Go to Secure Payment
-        </button>
-      `;
-
-      document.getElementById("payNow").onclick = () => {
-        localStorage.setItem("pending_order", JSON.stringify({
-          name,
-          email,
-          phone,
-          tour: tourName,
-          guests,
-          date,
-          time,
-          total: p.final.toFixed(2),
-          agentCode: agent,
-          agentName: agentFound ? agentFound.name : "",
-          giftCard: gift,
-          giftAmount: giftFound ? giftFound.amount : "",
-          commission: agent ? (p.final * 0.25).toFixed(2) : "0.00"
-        }));
-
-        window.location.href = link;
-      };
-
-      summary.scrollIntoView({ behavior: "smooth" });
-    };
-  });
+  grid.appendChild(card);
+});
 
   function renderAdmin() {
     const orders = getOrders();
