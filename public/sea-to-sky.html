@@ -10,7 +10,7 @@
 <meta name="keywords" content="Sea to Sky Gondola tour, Vancouver private tour, Sea to Sky Highway, Vancouver mountain tour, Squamish gondola tour">
 <meta property="og:title" content="Sea to Sky Gondola Tour | Vancouver Peaks Journey">
 <meta property="og:description" content="Premium private Sea to Sky Gondola experience from Vancouver with mountain and ocean views.">
-<meta property="og:image" content="https://vancouver-peak.vercel.app/sea.jpg">
+<meta property="og:image" content="https://vancouverpeaksjourney.com/sea.jpg">
 <meta property="og:type" content="website">
 
 </head>
@@ -142,6 +142,18 @@ Panoramic views, suspension bridge, and unforgettable photo moments.
 
 </div>
 
+<div style="margin:16px 0;padding:14px;background:#f7f7f7;border-radius:12px;border:1px solid #e2e2e2;">
+  <label style="display:flex;gap:10px;align-items:flex-start;margin:0;">
+    <input id="consentCheck" type="checkbox" style="width:auto;margin-top:4px;">
+    <span>
+      I agree to the tour terms, pickup rules, cancellation policy, and photo/video consent.
+    </span>
+  </label>
+  <div style="font-size:13px;color:#666;margin-top:8px;line-height:1.5;">
+    By confirming this booking, you understand that tour timing may vary due to traffic, weather, attraction operations, or road conditions. Photos/videos may be taken during the experience unless you request otherwise before the tour.
+  </div>
+</div>
+
 <button class="green" id="confirmBtn">
 Confirm Booking & Go To Payment
 </button>
@@ -166,9 +178,33 @@ const STRIPE_LINKS = {
   }
 };
 
-const today = new Date().toLocaleDateString("en-CA");
+const dateInput = document.getElementById("tourDate");
 
-document.getElementById("tourDate").min = today;
+const now = new Date();
+
+const localToday =
+  now.getFullYear() +
+  "-" +
+  String(now.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(now.getDate()).padStart(2, "0");
+
+dateInput.setAttribute("min", localToday);
+
+dateInput.addEventListener("focus", () => {
+  dateInput.setAttribute("min", localToday);
+});
+
+dateInput.addEventListener("click", () => {
+  dateInput.setAttribute("min", localToday);
+});
+
+dateInput.addEventListener("change", () => {
+  if (dateInput.value && dateInput.value < localToday) {
+    dateInput.value = "";
+    alert("Please select today or a future date.");
+  }
+});
 
 const guestCount = document.getElementById("guestCount");
 
@@ -230,6 +266,8 @@ document.getElementById("confirmBtn").onclick = () => {
 
   const gift = document.getElementById("giftCode").value.trim().toUpperCase();
 
+  const consent = document.getElementById("consentCheck").checked;
+
   if (!name || !email || !phone || !pickup) {
 
     alert("Please enter name, email, phone, and pickup location.");
@@ -240,6 +278,20 @@ document.getElementById("confirmBtn").onclick = () => {
   if (!date || !time) {
 
     alert("Please select date and time.");
+
+    return;
+  }
+
+  if (date < localToday) {
+
+    alert("Please select today or a future date.");
+
+    return;
+  }
+
+  if (!consent) {
+
+    alert("Please agree to the tour terms and consent before continuing.");
 
     return;
   }
@@ -266,6 +318,8 @@ document.getElementById("confirmBtn").onclick = () => {
     agentCode: promo,
 
     giftCard: gift,
+
+    consentAccepted: true,
 
     commission: promo
       ? (price.final * 0.25).toFixed(2)
