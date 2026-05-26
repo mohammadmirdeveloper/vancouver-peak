@@ -237,7 +237,7 @@ if (location.pathname.includes("success")) {
           : ""
       }
 
-      <a href="/${t.id}.html"
+      <a href="${t.id === 'sea' ? '/sea-to-sky.html' : '/' + t.id + '.html'}"
         style="
           display:inline-block;
           margin-top:20px;
