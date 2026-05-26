@@ -10,7 +10,7 @@
 <meta name="keywords" content="Whistler private tour, Vancouver to Whistler tour, Sea to Sky Highway tour, Whistler day trip, private Vancouver tour">
 <meta property="og:title" content="Whistler Private Tour | Vancouver Peaks Journey">
 <meta property="og:description" content="Private Whistler day trip from Vancouver with scenic stops and optional Sea to Sky Gondola add-on.">
-<meta property="og:image" content="https://vancouver-peak.vercel.app/whistler.jpg">
+<meta property="og:image" content="https://vancouverpeaksjourney.com/whistler.jpg">
 <meta property="og:type" content="website">
 
 </head>
@@ -135,6 +135,19 @@ Whistler Village, scenic stops, free time, and optional Sea to Sky Gondola add-o
   <div id="finalPrice" style="font-size:28px;font-weight:900;color:#b88700;">$380.00</div>
 </div>
 
+<div style="margin:16px 0;padding:14px;background:#f7f7f7;border-radius:12px;border:1px solid #e2e2e2;">
+  <label style="display:flex;gap:10px;align-items:flex-start;margin:0;">
+    <input id="consentCheck" type="checkbox" style="width:auto;margin-top:4px;">
+    <span>
+      I agree to the tour terms, pickup rules, cancellation policy, and photo/video consent.
+    </span>
+  </label>
+
+  <div style="font-size:13px;color:#666;margin-top:8px;line-height:1.5;">
+    By confirming this booking, you understand that tour timing may vary due to traffic, weather, attraction operations, or road conditions. Photos/videos may be taken during the experience unless you request otherwise before the tour.
+  </div>
+</div>
+
 <button class="green" id="confirmBtn">
 Confirm Booking & Go To Payment
 </button>
@@ -203,6 +216,7 @@ function calculatePrice() {
   const original = base * guests;
 
   let discountRate = 0;
+
   if (guests === 3) discountRate = 0.08;
   if (guests === 4) discountRate = 0.15;
 
@@ -218,9 +232,11 @@ function calculatePrice() {
 
 guestCount.addEventListener("change", calculatePrice);
 addonCheck.addEventListener("change", calculatePrice);
+
 calculatePrice();
 
 document.getElementById("confirmBtn").onclick = () => {
+
   const name = document.getElementById("customerName").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
@@ -229,6 +245,7 @@ document.getElementById("confirmBtn").onclick = () => {
   const time = document.getElementById("tourTime").value;
   const promo = document.getElementById("promoCode").value.trim().toUpperCase();
   const gift = document.getElementById("giftCode").value.trim().toUpperCase();
+  const consent = document.getElementById("consentCheck").checked;
 
   if (!name || !email || !phone || !pickup) {
     alert("Please enter name, email, phone, and pickup location.");
@@ -242,6 +259,11 @@ document.getElementById("confirmBtn").onclick = () => {
 
   if (date < localToday) {
     alert("Please select today or a future date.");
+    return;
+  }
+
+  if (!consent) {
+    alert("Please agree to the tour terms and consent before continuing.");
     return;
   }
 
@@ -260,6 +282,7 @@ document.getElementById("confirmBtn").onclick = () => {
     total: price.final.toFixed(2),
     agentCode: promo,
     giftCard: gift,
+    consentAccepted: true,
     commission: promo ? (price.final * 0.25).toFixed(2) : "0.00"
   }));
 
