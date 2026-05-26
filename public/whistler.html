@@ -163,8 +163,33 @@ const STRIPE_LINKS = {
   }
 };
 
-const today = new Date().toLocaleDateString("en-CA");
-document.getElementById("tourDate").min = today;
+const dateInput = document.getElementById("tourDate");
+
+const now = new Date();
+
+const localToday =
+  now.getFullYear() +
+  "-" +
+  String(now.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(now.getDate()).padStart(2, "0");
+
+dateInput.setAttribute("min", localToday);
+
+dateInput.addEventListener("focus", () => {
+  dateInput.setAttribute("min", localToday);
+});
+
+dateInput.addEventListener("click", () => {
+  dateInput.setAttribute("min", localToday);
+});
+
+dateInput.addEventListener("change", () => {
+  if (dateInput.value && dateInput.value < localToday) {
+    dateInput.value = "";
+    alert("Please select today or a future date.");
+  }
+});
 
 const guestCount = document.getElementById("guestCount");
 const addonCheck = document.getElementById("addonCheck");
@@ -212,6 +237,11 @@ document.getElementById("confirmBtn").onclick = () => {
 
   if (!date || !time) {
     alert("Please select date and time.");
+    return;
+  }
+
+  if (date < localToday) {
+    alert("Please select today or a future date.");
     return;
   }
 
