@@ -84,11 +84,19 @@ Mountain experience with city, ocean, forest, and sunset views.
 <label>Date</label>
 <input id="tourDate" type="date">
 
+<label>Time</label>
+<select id="tourTime">
+<option value="">Select time</option>
+<option>9:00 AM</option>
+<option>12:00 PM</option>
+<option>3:00 PM</option>
+</select>
+
 <label>Guests</label>
 <select id="guestCount">
 <option value="2">2 Guests</option>
-<option value="3">3 Guests</option>
-<option value="4">4 Guests</option>
+<option value="3">3 Guests - 8% Off</option>
+<option value="4">4 Guests - 15% Off</option>
 </select>
 
 <label>Promo / Agent Code</label>
@@ -97,7 +105,33 @@ Mountain experience with city, ocean, forest, and sunset views.
 <label>Gift Card Code</label>
 <input id="giftCode">
 
-<div class="summary" id="summaryBox"></div>
+<div id="priceBox" style="margin:18px 0;padding:16px;border:1px solid #ddd;border-radius:14px;background:white;">
+
+  <div style="font-size:14px;color:#666;">
+    Original Price
+  </div>
+
+  <div id="originalPrice" style="font-size:18px;font-weight:700;">
+    $200.00
+  </div>
+
+  <div style="font-size:14px;color:#666;margin-top:8px;">
+    Discount
+  </div>
+
+  <div id="discountPrice" style="font-size:18px;font-weight:700;color:#b00020;">
+    -$0.00
+  </div>
+
+  <div style="font-size:15px;color:#666;margin-top:10px;">
+    Final Total
+  </div>
+
+  <div id="finalPrice" style="font-size:28px;font-weight:900;color:#b88700;">
+    $200.00
+  </div>
+
+</div>
 
 <button class="green" id="confirmBtn">
 Confirm Booking & Go To Payment
@@ -113,8 +147,91 @@ Confirm Booking & Go To Payment
 
 </main>
 
-<script src="payment.js"></script>
-<script src="pricing.js"></script>
+<script>
+
+const STRIPE_LINKS = {
+  grouse: {
+    2: "https://buy.stripe.com/test_00w00jb8EcVT8Uj5M63ZK03",
+    3: "https://buy.stripe.com/test_3cIbJ1b8EcVTb2reiC3ZK0b",
+    4: "https://buy.stripe.com/test_00w00j5Ok5tr5I7cau3ZK09"
+  }
+};
+
+const today = new Date().toLocaleDateString("en-CA");
+document.getElementById("tourDate").min = today;
+
+const guestCount = document.getElementById("guestCount");
+const originalPrice = document.getElementById("originalPrice");
+const discountPrice = document.getElementById("discountPrice");
+const finalPrice = document.getElementById("finalPrice");
+
+function calculatePrice() {
+  const guests = Number(guestCount.value);
+  const base = 100;
+  const original = base * guests;
+
+  let discountRate = 0;
+
+  if (guests === 3) discountRate = 0.08;
+  if (guests === 4) discountRate = 0.15;
+
+  const discount = original * discountRate;
+  const final = original - discount;
+
+  originalPrice.textContent = `$${original.toFixed(2)}`;
+  discountPrice.textContent = `-$${discount.toFixed(2)}`;
+  finalPrice.textContent = `$${final.toFixed(2)}`;
+
+  return {
+    guests,
+    final
+  };
+}
+
+guestCount.addEventListener("change", calculatePrice);
+calculatePrice();
+
+document.getElementById("confirmBtn").onclick = () => {
+  const name = document.getElementById("customerName").value.trim();
+  const email = document.getElementById("customerEmail").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  const pickup = document.getElementById("pickupLocation").value.trim();
+  const date = document.getElementById("tourDate").value;
+  const time = document.getElementById("tourTime").value;
+  const promo = document.getElementById("promoCode").value.trim().toUpperCase();
+  const gift = document.getElementById("giftCode").value.trim().toUpperCase();
+
+  if (!name || !email || !phone || !pickup) {
+    alert("Please enter name, email, phone, and pickup location.");
+    return;
+  }
+
+  if (!date || !time) {
+    alert("Please select date and time.");
+    return;
+  }
+
+  const price = calculatePrice();
+
+  localStorage.setItem("pending_order", JSON.stringify({
+    name,
+    email,
+    phone,
+    pickup,
+    tour: "Grouse Mountain",
+    guests: price.guests,
+    date,
+    time,
+    total: price.final.toFixed(2),
+    agentCode: promo,
+    giftCard: gift,
+    commission: promo ? (price.final * 0.25).toFixed(2) : "0.00"
+  }));
+
+  window.location.href = STRIPE_LINKS.grouse[price.guests];
+};
+
+</script>
 
 </body>
 </html>
