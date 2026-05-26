@@ -1,40 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Vancouver Peaks Journey Ticket</title>
-  <script src="/app.js" defer></script>
-  <style>
-    body { font-family: Arial; background:#f4f4f4; padding:30px; }
-    .ticket {
-      max-width: 650px; margin:auto; background:white; padding:30px;
-      border-radius:18px; border:2px solid #d4a017;
-    }
-    h1 { color:#071d35; }
-    .brand { color:#d4a017; font-weight:800; }
-    button {
-      padding:14px 22px; background:#071d35; color:white;
-      border:none; border-radius:10px; font-weight:bold; margin-top:20px;
-    }
-    @media print { button { display:none; } body { background:white; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vancouver Peaks Journey Ticket</title>
+
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:#f4f4f4;
+  padding:24px;
+  color:#071d35;
+}
+.ticket{
+  max-width:700px;
+  margin:auto;
+  background:white;
+  padding:28px;
+  border-radius:20px;
+  border:2px solid #d4a017;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+.brand{
+  color:#d4a017;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+h1{
+  color:#071d35;
+  margin-bottom:8px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+}
+.label{
+  color:#666;
+  font-weight:700;
+}
+.value{
+  font-weight:800;
+  text-align:right;
+}
+.total{
+  font-size:24px;
+  color:#b88700;
+}
+.note{
+  background:#f7f7f7;
+  padding:14px;
+  border-radius:12px;
+  margin-top:18px;
+  line-height:1.5;
+}
+button{
+  width:100%;
+  padding:15px 22px;
+  background:#071d35;
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  margin-top:20px;
+  font-size:16px;
+}
+a{
+  display:block;
+  text-align:center;
+  margin-top:18px;
+  color:#071d35;
+  font-weight:700;
+}
+@media print{
+  button,a{display:none;}
+  body{background:white;padding:0;}
+  .ticket{box-shadow:none;}
+}
+</style>
 </head>
+
 <body>
-  <div class="ticket">
-    <div class="brand">VANCOUVER PEAKS JOURNEY</div>
-    <h1>Booking Confirmed ✅</h1>
 
-    <p>Your payment was successful.</p>
-    <p>This is your booking confirmation ticket.</p>
+<div class="ticket">
+  <div class="brand">VANCOUVER PEAKS JOURNEY</div>
 
-    <hr>
+  <h1>Booking Confirmed ✅</h1>
+  <p>Your payment was successful. This is your booking confirmation ticket.</p>
 
-    <p><b>Important:</b> We will contact you shortly by email or WhatsApp to confirm pickup details.</p>
-    <p><b>WhatsApp:</b> +1 778 681 9140</p>
+  <hr>
 
-    <button onclick="window.print()">Download / Save Ticket as PDF</button>
-    <br><br>
-    <a href="/">Return Home</a>
+  <div id="ticketDetails"></div>
+
+  <div class="note">
+    <b>Important:</b> We will contact you shortly by email or WhatsApp to confirm pickup details.<br>
+    <b>WhatsApp:</b> +1 778 681 9140
   </div>
+
+  <button onclick="window.print()">Download / Save Ticket as PDF</button>
+  <a href="/">Return Home</a>
+</div>
+
+<script>
+const order = JSON.parse(localStorage.getItem("pending_order") || "{}");
+
+const ticketDetails = document.getElementById("ticketDetails");
+
+if (!order || !order.tour) {
+  ticketDetails.innerHTML = `
+    <div class="note">
+      Booking details were not found on this device, but your payment was successful.
+      Please contact us on WhatsApp with your payment confirmation.
+    </div>
+  `;
+} else {
+  ticketDetails.innerHTML = `
+    <div class="row">
+      <div class="label">Tour</div>
+      <div class="value">${order.tour || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Name</div>
+      <div class="value">${order.name || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Email</div>
+      <div class="value">${order.email || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Phone</div>
+      <div class="value">${order.phone || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Pickup</div>
+      <div class="value">${order.pickup || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Date</div>
+      <div class="value">${order.date || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Time</div>
+      <div class="value">${order.time || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Guests</div>
+      <div class="value">${order.guests || "-"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Total Paid</div>
+      <div class="value total">$${order.total || "0.00"}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Promo / Agent Code</div>
+      <div class="value">${order.agentCode || "-"}</div>
+    </div>
+  `;
+}
+</script>
+
 </body>
 </html>
