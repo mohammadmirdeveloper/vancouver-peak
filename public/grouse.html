@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grouse Mountain</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    VANCOUVER <span>PEAKS JOURNEY</span>
+  </div>
+
+  <div>
+    <a class="btn ghost" href="index.html">Home</a>
+    <a class="btn ghost" href="https://wa.me/17786819140">WhatsApp</a>
+  </div>
+</header>
+
+<section class="hero" style="background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.6)),url('/grouse.jpg') center/cover;min-height:420px;color:white;display:flex;align-items:center;padding:60px 8%;">
+  <div>
+    <div style="color:var(--gold);font-weight:950;letter-spacing:.08em">
+      GROUSE MOUNTAIN EXPERIENCE
+    </div>
+
+    <h1>Grouse Mountain</h1>
+
+    <p>
+      Experience Vancouver’s mountain, forest, city, and ocean views in one unforgettable journey.
+    </p>
+  </div>
+</section>
+
+<main class="wrap">
+
+<section>
+
+<div class="title">
+  <div style="color:var(--gold);font-size:30px">⛰</div>
+
+  <h2>Book Your Experience</h2>
+
+  <p>
+    Premium private Vancouver mountain experience.
+  </p>
+</div>
+
+<div class="cards">
+
+<article class="card">
+
+<div class="body">
+
+<h3>Grouse Mountain</h3>
+
+<p class="desc">
+Mountain experience with city, ocean, forest, and sunset views.
+</p>
+
+<ul class="features">
+<li>Grouse Gondola</li>
+<li>Mountain Viewpoints</li>
+<li>Photo Stops</li>
+<li>3–4 Hours Experience</li>
+</ul>
+
+<hr>
+
+<label>Full Name</label>
+<input id="customerName">
+
+<label>Email</label>
+<input id="customerEmail" type="email">
+
+<label>Phone</label>
+<input id="customerPhone">
+
+<label>Pickup Location</label>
+<input id="pickupLocation" placeholder="Hotel / Cruise Terminal / Address">
+
+<label>Date</label>
+<input id="tourDate" type="date">
+
+<label>Guests</label>
+<select id="guestCount">
+<option value="2">2 Guests</option>
+<option value="3">3 Guests</option>
+<option value="4">4 Guests</option>
+</select>
+
+<label>Promo / Agent Code</label>
+<input id="promoCode">
+
+<label>Gift Card Code</label>
+<input id="giftCode">
+
+<div class="summary" id="summaryBox"></div>
+
+<button class="green" id="confirmBtn">
+Confirm Booking & Go To Payment
+</button>
+
+<div class="ticket" id="ticketBox"></div>
+
+</div>
+</article>
+
+</div>
+</section>
+
+</main>
+
+<script src="payment.js"></script>
+<script src="pricing.js"></script>
+
+</body>
+</html>
