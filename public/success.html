@@ -104,7 +104,18 @@ a{
 </div>
 
 <script>
-const order = JSON.parse(localStorage.getItem("pending_order") || "{}");
+const order = {
+  tour: "Whistler + Sea to Sky Add-On",
+  name: "Test Customer",
+  email: "test@example.com",
+  phone: "+1 778 681 9140",
+  pickup: "Fairmont Waterfront Hotel",
+  date: "2026-06-10",
+  time: "9:00 AM",
+  guests: 2,
+  total: "500.00",
+  agentCode: "TEST"
+};
 
 const ticketDetails = document.getElementById("ticketDetails");
 
