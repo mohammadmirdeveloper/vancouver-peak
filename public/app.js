@@ -257,7 +257,7 @@ if (location.pathname.includes("success")) {
 });
 async function getOrdersFromSupabase() {
   try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*&order=created_at.desc`, {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*`, {
       headers: {
         "apikey": SUPABASE_KEY,
         "Authorization": `Bearer ${SUPABASE_KEY}`
