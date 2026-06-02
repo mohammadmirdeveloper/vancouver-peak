@@ -255,9 +255,28 @@ if (location.pathname.includes("success")) {
 
   grid.appendChild(card);
 });
+async function getOrdersFromSupabase() {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*&order=created_at.desc`, {
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`
+      }
+    });
 
-  function renderAdmin() {
-    const orders = getOrders();
+    if (!response.ok) {
+      console.error("Supabase orders error:", await response.text());
+      return [];
+    }
+
+    return await response.json();
+  } catch (err) {
+    console.error("Failed to load orders:", err);
+    return [];
+  }
+}
+  async function renderAdmin() {
+    const orders = await getOrdersFromSupabase();
     const agents = getAgents();
     const giftCards = getGiftCards();
     const panel = document.getElementById("adminPanel");
