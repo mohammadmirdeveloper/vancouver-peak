@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leave a Review | Vancouver Peaks Journey</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<main class="wrap">
+  <section class="card">
+    <div class="body">
+
+      <h1>Leave a Review</h1>
+      <p class="desc">Thank you for joining Vancouver Peaks Journey. Your feedback helps future guests.</p>
+
+      <label>Your Name</label>
+      <input id="customerName" placeholder="e.g. Sarah M.">
+
+      <label>Country</label>
+      <input id="country" placeholder="e.g. Australia">
+
+      <label>Tour</label>
+      <select id="tour">
+        <option value="">Select tour</option>
+        <option>Sea to Sky Gondola</option>
+        <option>Grouse Mountain</option>
+        <option>Whistler Adventure</option>
+        <option>Whistler + Sea to Sky Add-On</option>
+      </select>
+
+      <label>Tour Leader</label>
+      <select id="tourLeader">
+        <option value="">Select tour leader</option>
+        <option>Hamed</option>
+        <option>Arash</option>
+        <option>Mohammad</option>
+      </select>
+
+      <label>Rating</label>
+      <select id="rating">
+        <option value="">Select rating</option>
+        <option value="5">★★★★★ 5</option>
+        <option value="4">★★★★ 4</option>
+        <option value="3">★★★ 3</option>
+        <option value="2">★★ 2</option>
+        <option value="1">★ 1</option>
+      </select>
+
+      <label>Comment</label>
+      <textarea id="comment" rows="5" placeholder="Tell us about your experience..."></textarea>
+
+      <button class="green" id="submitReview">Submit Review</button>
+
+      <div id="message" style="margin-top:18px;font-weight:800;"></div>
+
+    </div>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = "اینجا SUPABASE_URL خط 5 app.js را بگذار";
+const SUPABASE_KEY = "اینجا SUPABASE_KEY خط 6 app.js را بگذار";
+
+document.getElementById("submitReview").onclick = async () => {
+  const customer_name = document.getElementById("customerName").value.trim();
+  const country = document.getElementById("country").value.trim();
+  const tour = document.getElementById("tour").value;
+  const tour_leader = document.getElementById("tourLeader").value;
+  const rating = Number(document.getElementById("rating").value);
+  const comment = document.getElementById("comment").value.trim();
+  const message = document.getElementById("message");
+
+  if (!customer_name || !country || !tour || !tour_leader || !rating || !comment) {
+    message.style.color = "#b00020";
+    message.textContent = "Please complete all fields.";
+    return;
+  }
+
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/reviews`, {
+    method: "POST",
+    headers: {
+      "apikey": SUPABASE_KEY,
+      "Authorization": `Bearer ${SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "return=minimal"
+    },
+    body: JSON.stringify({
+      customer_name,
+      country,
+      tour,
+      tour_leader,
+      rating,
+      comment,
+      approved: false
+    })
+  });
+
+  if (response.ok) {
+    message.style.color = "green";
+    message.textContent = "Thank you! Your review has been submitted.";
+  } else {
+    message.style.color = "#b00020";
+    message.textContent = "Something went wrong. Please try again.";
+  }
+};
+</script>
+
+</body>
+</html>
