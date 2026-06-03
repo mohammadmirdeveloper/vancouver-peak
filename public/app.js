@@ -1,13 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   const ADMIN_CODE = "9454";
+
   const WHATSAPP_LINK =
     "https://wa.me/17786819140?text=Hi%20Vancouver%20Peaks%20Journey%2C%20I%20need%20help%20with%20my%20booking.";
-const SUPABASE_URL = "https://fmzyvslflsngnorpmuju.supabase.co";
-const SUPABASE_KEY = "sb_publishable_RTM95bE519jtHrELvHSwrQ_FuTR7Ehg";
-  
+
+  const SUPABASE_URL = "https://fmzyvslflsngnorpmuju.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_RTM95bE519jtHrELvHSwrQ_FuTR7Ehg";
+
   const now = new Date();
-const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  .toLocaleDateString("en-CA");
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    .toLocaleDateString("en-CA");
 
   const STRIPE_LINKS = {
     sea: {
@@ -64,36 +66,37 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   function saveOrders(orders) {
     localStorage.setItem("vpj_orders", JSON.stringify(orders));
   }
-  async function saveBookingToSupabase(order) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
-    method: "POST",
-    headers: {
-      "apikey": SUPABASE_KEY,
-      "Authorization": `Bearer ${SUPABASE_KEY}`,
-      "Content-Type": "application/json",
-      "Prefer": "return=minimal"
-    },
-    body: JSON.stringify({
-      name: order.name,
-      email: order.email,
-      phone: order.phone,
-      tour: order.tour,
-      guests: order.guests,
-      tour_date: order.date,
-      tour_time: order.time,
-      total: order.total,
-      agent_code: order.agentCode,
-      agent_name: order.agentName,
-      commission: order.commission,
-      gift_card: order.giftCard,
-      status: "paid"
-    })
-  });
 
-  if (!response.ok) {
-    console.error("Supabase save failed", await response.text());
+  async function saveBookingToSupabase(order) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/bookings`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({
+        name: order.name,
+        email: order.email,
+        phone: order.phone,
+        tour: order.tour,
+        guests: order.guests,
+        tour_date: order.date,
+        tour_time: order.time,
+        total: order.total,
+        agent_code: order.agentCode,
+        agent_name: order.agentName,
+        commission: order.commission,
+        gift_card: order.giftCard,
+        status: "paid"
+      })
+    });
+
+    if (!response.ok) {
+      console.error("Supabase save failed", await response.text());
+    }
   }
-}
 
   function getAgents() {
     return JSON.parse(localStorage.getItem("vpj_agents") || "[]");
@@ -118,65 +121,65 @@ const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const final = original - discount;
     return { original, discount, final };
   }
-if (location.pathname.includes("success")) {
-  const pending = JSON.parse(localStorage.getItem("pending_order") || "null");
 
-  let ticket = pending || {};
+  if (location.pathname.includes("success")) {
+    const pending = JSON.parse(localStorage.getItem("pending_order") || "null");
 
-  if (pending) {
-    const orders = getOrders();
+    let ticket = pending || {};
 
-    const confirmedOrder = {
-      ...pending,
-      status: "Paid",
-      created: new Date().toLocaleString()
-    };
+    if (pending) {
+      const orders = getOrders();
 
-    orders.push(confirmedOrder);
-    saveBookingToSupabase(confirmedOrder);
-    saveOrders(orders);
+      const confirmedOrder = {
+        ...pending,
+        status: "Paid",
+        created: new Date().toLocaleString()
+      };
 
-    ticket = confirmedOrder;
+      orders.push(confirmedOrder);
+      saveBookingToSupabase(confirmedOrder);
+      saveOrders(orders);
 
-    localStorage.removeItem("pending_order");
+      ticket = confirmedOrder;
+
+      localStorage.removeItem("pending_order");
+    }
+
+    document.body.innerHTML = `
+      <div style="font-family:Arial;max-width:700px;margin:40px auto;padding:35px;border:2px solid #d4a017;border-radius:18px;text-align:center;">
+        <h2 style="color:#d4a017;">Vancouver Peaks Journey Ticket</h2>
+        <h1>Booking Confirmed ✅</h1>
+
+        <hr>
+
+        <p><b>Name:</b> ${ticket.name || ""}</p>
+        <p><b>Email:</b> ${ticket.email || ""}</p>
+        <p><b>Phone:</b> ${ticket.phone || ""}</p>
+        <p><b>Tour:</b> ${ticket.tour || ""}</p>
+        <p><b>Guests:</b> ${ticket.guests || ""}</p>
+        <p><b>Date:</b> ${ticket.date || ""}</p>
+        <p><b>Time:</b> ${ticket.time || ""}</p>
+        <p><b>Total Paid:</b> $${ticket.total || ""}</p>
+        <p><b>Status:</b> Paid</p>
+
+        <hr>
+
+        <p>We will contact you shortly via email or WhatsApp.</p>
+
+        <button onclick="window.print()" style="padding:14px 24px;background:#d4a017;color:black;border:none;border-radius:10px;font-weight:bold;">
+          Download / Save Ticket as PDF
+        </button>
+
+        <br><br>
+
+        <a href="/" style="display:inline-block;padding:14px 24px;background:#071d35;color:white;text-decoration:none;border-radius:10px;">
+          Return Home
+        </a>
+      </div>
+    `;
+
+    return;
   }
-
-  document.body.innerHTML = `
-    <div style="font-family:Arial;max-width:700px;margin:40px auto;padding:35px;border:2px solid #d4a017;border-radius:18px;text-align:center;">
-      <h2 style="color:#d4a017;">Vancouver Peaks Journey Ticket</h2>
-      <h1>Booking Confirmed ✅</h1>
-
-      <hr>
-
-      <p><b>Name:</b> ${ticket.name || ""}</p>
-      <p><b>Email:</b> ${ticket.email || ""}</p>
-      <p><b>Phone:</b> ${ticket.phone || ""}</p>
-      <p><b>Tour:</b> ${ticket.tour || ""}</p>
-      <p><b>Guests:</b> ${ticket.guests || ""}</p>
-      <p><b>Date:</b> ${ticket.date || ""}</p>
-      <p><b>Time:</b> ${ticket.time || ""}</p>
-      <p><b>Total Paid:</b> $${ticket.total || ""}</p>
-      <p><b>Status:</b> Paid</p>
-
-      <hr>
-
-      <p>We will contact you shortly via email or WhatsApp.</p>
-
-      <button onclick="window.print()" style="padding:14px 24px;background:#d4a017;color:black;border:none;border-radius:10px;font-weight:bold;">
-        Download / Save Ticket as PDF
-      </button>
-
-      <br><br>
-
-      <a href="/" style="display:inline-block;padding:14px 24px;background:#071d35;color:white;text-decoration:none;border-radius:10px;">
-        Return Home
-      </a>
-    </div>
-  `;
-
-  return;
-}
-  
 
   document.body.innerHTML = `
     <header style="padding:22px 8%;background:#071d35;color:white;font-weight:800;">
@@ -202,79 +205,99 @@ if (location.pathname.includes("success")) {
       WhatsApp
     </a>
 
-   
+    <section id="reviews" style="padding:60px 8%;background:#ffffff;">
+      <h2 style="text-align:center;font-size:42px;margin-bottom:10px;">
+        ⭐ Guest Reviews
+      </h2>
+
+      <p style="text-align:center;color:#666;margin-bottom:40px;">
+        What our guests say about Vancouver Peaks Journey
+      </p>
+
+      <div id="leadersBox" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
+        Loading tour leader ratings...
+      </div>
+
+      <br><br>
+
+      <div id="reviewsBox" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
+        Loading reviews...
+      </div>
+    </section>
 
     <section id="adminPanel" style="display:none;padding:35px 8%;background:#071d35;color:white;"></section>
   `;
 
   const grid = document.getElementById("tourGrid");
 
- tours.forEach(t => {
-  const card = document.createElement("div");
+  tours.forEach(t => {
+    const card = document.createElement("div");
 
-  card.style.cssText =
-    "background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);";
+    card.style.cssText =
+      "background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);";
 
-  card.innerHTML = `
-    <img src="${t.image}" style="width:100%;height:240px;object-fit:cover;">
+    card.innerHTML = `
+      <img src="${t.image}" style="width:100%;height:240px;object-fit:cover;">
 
-    <div style="padding:24px;">
-      <h3 style="font-size:30px;margin-bottom:10px;">
-        ${t.name}
-      </h3>
+      <div style="padding:24px;">
+        <h3 style="font-size:30px;margin-bottom:10px;">
+          ${t.name}
+        </h3>
 
-      <p style="color:#555;line-height:1.6;">
-        ${t.desc}
-      </p>
+        <p style="color:#555;line-height:1.6;">
+          ${t.desc}
+        </p>
 
-      <h3 style="color:#b88700;margin-top:18px;">
-        From $${t.price}/person
-      </h3>
+        <h3 style="color:#b88700;margin-top:18px;">
+          From $${t.price}/person
+        </h3>
 
-      ${
-        t.id === "whistler"
-          ? `<p style="color:#555;">+ Sea to Sky Add-On Available</p>`
-          : ""
+        ${
+          t.id === "whistler"
+            ? `<p style="color:#555;">+ Sea to Sky Add-On Available</p>`
+            : ""
+        }
+
+        <a href="${t.id === 'sea' ? '/sea-to-sky.html' : '/' + t.id + '.html'}"
+          style="
+            display:inline-block;
+            margin-top:20px;
+            padding:14px 22px;
+            background:#071d35;
+            color:white;
+            text-decoration:none;
+            border-radius:12px;
+            font-weight:700;
+          ">
+          View Details & Book
+        </a>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  async function getOrdersFromSupabase() {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*`, {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`
+        }
+      });
+
+      if (!response.ok) {
+        console.error("Supabase orders error:", await response.text());
+        return [];
       }
 
-      <a href="${t.id === 'sea' ? '/sea-to-sky.html' : '/' + t.id + '.html'}"
-        style="
-          display:inline-block;
-          margin-top:20px;
-          padding:14px 22px;
-          background:#071d35;
-          color:white;
-          text-decoration:none;
-          border-radius:12px;
-          font-weight:700;
-        ">
-        View Details & Book
-      </a>
-    </div>
-  `;
-
-  grid.appendChild(card);
-});
-async function getOrdersFromSupabase() {
-  try {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/orders?select=*`, {
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": `Bearer ${SUPABASE_KEY}`
-      }
-    });
-
-    if (!response.ok) {
-      console.error("Supabase orders error:", await response.text());
+      return await response.json();
+    } catch (err) {
+      console.error("Failed to load orders:", err);
       return [];
     }
-
-    return await response.json();
-  } catch (err) {
-    console.error("Failed to load orders:", err);
-    return [];
   }
-}
+
   async function renderAdmin() {
     const orders = await getOrdersFromSupabase();
     const agents = getAgents();
@@ -340,6 +363,7 @@ async function getOrdersFromSupabase() {
     document.getElementById("addAgent").onclick = () => {
       const code = document.getElementById("newAgentCode").value.trim().toUpperCase();
       const name = document.getElementById("newAgentName").value.trim();
+
       if (!code) return alert("Enter agent code.");
 
       const list = getAgents();
@@ -351,6 +375,7 @@ async function getOrdersFromSupabase() {
     document.getElementById("addGift").onclick = () => {
       const code = document.getElementById("newGiftCode").value.trim().toUpperCase();
       const amount = document.getElementById("newGiftAmount").value.trim();
+
       if (!code || !amount) return alert("Enter gift code and amount.");
 
       const list = getGiftCards();
@@ -387,32 +412,66 @@ async function getOrdersFromSupabase() {
     });
 
     document.getElementById("exportCSV").onclick = () => {
-      const rows = [["Name","Email","Phone","Tour","Guests","Date","Time","Total","Agent Code","Agent Name","Commission","Gift Card","Gift Amount","Status","Created"]];
+      const rows = [[
+        "Name",
+        "Email",
+        "Phone",
+        "Tour",
+        "Guests",
+        "Date",
+        "Time",
+        "Total",
+        "Agent Code",
+        "Agent Name",
+        "Commission",
+        "Gift Card",
+        "Gift Amount",
+        "Status",
+        "Created"
+      ]];
+
       getOrders().forEach(o => rows.push([
-        o.name,o.email,o.phone,o.tour,o.guests,o.date,o.time,o.total,o.agentCode || "",o.agentName || "",o.commission || "0.00",o.giftCard || "",o.giftAmount || "",o.status || "Paid",o.created || ""
+        o.name,
+        o.email,
+        o.phone,
+        o.tour,
+        o.guests,
+        o.date,
+        o.time,
+        o.total,
+        o.agentCode || "",
+        o.agentName || "",
+        o.commission || "0.00",
+        o.giftCard || "",
+        o.giftAmount || "",
+        o.status || "Paid",
+        o.created || ""
       ]));
 
       const csv = rows.map(r => r.map(x => `"${x}"`).join(",")).join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
       const a = document.createElement("a");
+
       a.href = URL.createObjectURL(blob);
       a.download = "vancouver-peaks-orders.csv";
       a.click();
     };
   }
 
- if (location.hash === "#admin") {
-  setTimeout(() => {
-    const pass = prompt("Admin password:");
-    if (pass !== ADMIN_CODE) {
-      alert("Wrong password");
-      return;
-    }
+  if (location.hash === "#admin") {
+    setTimeout(() => {
+      const pass = prompt("Admin password:");
 
-    const panel = document.getElementById("adminPanel");
-    panel.style.display = "block";
-    renderAdmin();
-    panel.scrollIntoView({ behavior: "smooth" });
-  }, 300);
-}
+      if (pass !== ADMIN_CODE) {
+        alert("Wrong password");
+        return;
+      }
+
+      const panel = document.getElementById("adminPanel");
+
+      panel.style.display = "block";
+      renderAdmin();
+      panel.scrollIntoView({ behavior: "smooth" });
+    }, 300);
+  }
 });
