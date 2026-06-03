@@ -249,7 +249,12 @@ document.getElementById("confirmBtn").onclick = () => {
   const time = document.getElementById("tourTime").value;
   const promo = document.getElementById("promoCode").value.trim().toUpperCase();
   const gift = document.getElementById("giftCode").value.trim().toUpperCase();
+  const consent = document.getElementById("consentCheck").checked;
 
+if (!consent) {
+  alert("Please agree to the Terms & Conditions before continuing.");
+  return;
+}
   if (!name || !email || !phone || !pickup) {
     alert("Please enter name, email, phone, and pickup location.");
     return;
