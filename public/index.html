@@ -1,1 +1,327 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vancouver Peaks Journey | Private Vancouver Tours</title><link rel="stylesheet" href="styles.css"><meta name="description" content="Premium private Vancouver tours including Sea to Sky Gondola, Grouse Mountain, and Whistler experiences."><meta name="keywords" content="Vancouver tours, Whistler tour, Sea to Sky Gondola, Grouse Mountain, private Vancouver tour"><meta property="og:title" content="Vancouver Peaks Journey"><meta property="og:description" content="Premium private Vancouver mountain experiences."><meta property="og:image" content="https://vancouverpeaksjourney.com/banner.jpg"><meta property="og:type" content="website"></head><body><header><div class="brand">VANCOUVER <span>PEAKS JOURNEY</span></div><div><a class="btn ghost" href="#attractions">Attractions</a> <button class="ghost" id="adminBtn">Admin</button> <a class="btn ghost" href="https://wa.me/17786819140">WhatsApp</a></div></header><section class="hero" id="hero"><div><div style="color:var(--gold);font-weight:950;letter-spacing:.08em">EXPLORE. EXPERIENCE. REMEMBER.</div><h1>Vancouver Peaks Journey</h1><p>Discover Vancouver’s most beautiful attractions with a premium private experience.</p><a class="btn" href="#attractions">Choose Your Adventure</a></div></section><main class="wrap"><section id="attractions"><div class="title"><div style="color:var(--gold);font-size:30px">⛰</div><h2>Choose Your Peak Experience</h2><p>Select your attraction first. Booking details, pickup location, promo code, and gift card will be entered on the tour page.</p></div><div class="cards"><article class="card"><div class="badge">MOST POPULAR</div><div class="photo" id="imgSea"></div><div class="body"><h3>Sea to Sky Gondola</h3><p class="desc">Panoramic mountain, ocean, and sky views with suspension bridge and photo moments.</p><ul class="features"><li>Gondola Ride</li><li>Sky Pilot Suspension Bridge</li><li>Scenic Viewpoints</li><li>4–5 Hours Experience</li></ul><div class="price-row"><div class="price">From $150/person</div><button onclick="location.href='sea-to-sky.html'">View Tour</button></div></div></article><article class="card"><div class="photo" id="imgGrouse"></div><div class="body"><h3>Grouse Mountain</h3><p class="desc">Mountain experience with city, ocean, forest, and sunset views.</p><ul class="features"><li>Grouse Gondola</li><li>Mountain Viewpoints</li><li>Photo Stops</li><li>3–4 Hours Experience</li></ul><div class="price-row"><div class="price">From $100/person</div><button onclick="location.href='grouse.html'">View Tour</button></div></div></article><article class="card"><div class="photo" id="imgWhistler"></div><div class="body"><h3>Whistler Adventure</h3><p class="desc">Whistler Village, scenic stops, free time, and optional Sea to Sky add-on.</p><ul class="features"><li>Whistler Village</li><li>Scenic Stops</li><li>Free Time</li><li>6–7 Hours Experience</li></ul><div class="addon-card"><div>Optional Sea to Sky Add-on</div><div>Available</div></div><div class="price-row"><div class="price">From $190/person</div><button onclick="location.href='whistler.html'">View Tour</button></div></div></article></div></section><section id="reviews" style="margin-top:60px;"><div class="title"><div style="color:var(--gold);font-size:30px">⭐</div><h2>Guest Reviews</h2><p>What our guests say about Vancouver Peaks Journey.</p></div><div id="leadersBox" class="cards"></div><br><br><div id="reviewsBox" class="cards"></div></section><section id="trust" style="margin-top:60px;"><div class="title"><div style="color:var(--gold);font-size:30px">★</div><h2>Private, Comfortable, Memorable</h2><p>Designed for visitors who want a smooth Vancouver experience without crowded bus tours.</p></div><div class="cards"><article class="card"><div class="body"><h3>Premium Private Experience</h3><p class="desc">Comfortable pickup, flexible timing, and a personal tour experience for couples, families, and small groups.</p></div></article><article class="card"><div class="body"><h3>Scenic Photo Moments</h3><p class="desc">Beautiful mountain, ocean, forest, and city viewpoints selected for memorable photos and relaxed sightseeing.</p></div></article><article class="card"><div class="body"><h3>Easy Booking</h3><p class="desc">Choose your tour, select your date and pickup location, and confirm your experience online.</p></div></article></div></section><section id="faq" style="margin-top:60px;"><div class="title"><div style="color:var(--gold);font-size:30px">❓</div><h2>Frequently Asked Questions</h2><p>Quick answers before booking your Vancouver experience.</p></div><div class="cards"><article class="card"><div class="body"><h3>Is pickup included?</h3><p class="desc">Yes. Pickup is available from hotels, cruise terminals, and selected Vancouver locations.</p></div></article><article class="card"><div class="body"><h3>Are the tours private?</h3><p class="desc">Yes. Experiences are designed for couples, families, and small private groups.</p></div></article><article class="card"><div class="body"><h3>Can I book for multiple guests?</h3><p class="desc">Yes. Current booking options support 2, 3, or 4 guests with group discounts.</p></div></article></div></section><section id="contact" style="margin-top:60px;"><div class="title"><div style="color:var(--gold);font-size:30px">✦</div><h2>Before You Book</h2><p>Contact us for custom timing, cruise pickup coordination, or special requests.</p></div><div class="cards"><article class="card"><div class="body"><h3>Private Experience</h3><p class="desc">Flexible timing, premium comfort, and a relaxed sightseeing experience without crowded buses.</p></div></article><article class="card"><div class="body"><h3>WhatsApp Support</h3><p class="desc">Questions before booking? Contact us directly on WhatsApp for quick assistance.</p><a class="btn" style="margin-top:12px;" href="https://wa.me/17786819140">Chat On WhatsApp</a></div></article><article class="card"><div class="body"><h3>Custom Requests</h3><p class="desc">Need airport pickup, cruise coordination, photography stops, or a custom schedule? We can help.</p></div></article></div></section><section class="admin" id="adminPanel"><h2>Admin Dashboard</h2><p>Password is set in Vercel environment variable.</p><div class="admin-grid"><div class="admin-box"><h3>Change Prices</h3><label>Sea<input id="adminSea" type="number"></label><label>Grouse<input id="adminGrouse" type="number"></label><label>Whistler<input id="adminWhistler" type="number"></label><label>Add-on<input id="adminAddon" type="number"></label><br><button id="savePricesBtn">Save Prices</button></div><div class="admin-box"><h3>Upload Photos</h3><label>Hero<input id="heroFile" type="file" accept="image/*"></label><label>Sea<input id="seaFile" type="file" accept="image/*"></label><label>Grouse<input id="grouseFile" type="file" accept="image/*"></label><label>Whistler<input id="whistlerFile" type="file" accept="image/*"></label><br><button id="uploadImagesBtn">Upload Selected Images</button></div><div class="admin-box"><h3>Orders</h3><label>Filter Date<input id="filterDate" type="date"></label><br><button id="refreshOrdersBtn">Refresh Orders</button></div></div><table><thead><tr><th>Ticket</th><th>Tour</th><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Total</th></tr></thead><tbody id="ordersBody"></tbody></table></section></main><footer><div><b>Vancouver Peaks Journey</b></div><a style="color:white" href="https://wa.me/17786819140">WhatsApp: 778 681 9140</a></footer><script src="app.js"></script><script src="payment.js"></script><script src="pricing.js"></script><script src="reviews.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Vancouver Peaks Journey | Private Vancouver Tours</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <meta name="description" content="Premium private Vancouver tours including Sea to Sky Gondola, Grouse Mountain, and Whistler experiences.">
+  <meta name="keywords" content="Vancouver tours, Whistler tour, Sea to Sky Gondola, Grouse Mountain, private Vancouver tour">
+
+  <meta property="og:title" content="Vancouver Peaks Journey">
+  <meta property="og:description" content="Premium private Vancouver mountain experiences.">
+  <meta property="og:image" content="https://vancouverpeaksjourney.com/banner.jpg">
+  <meta property="og:type" content="website">
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    VANCOUVER <span>PEAKS JOURNEY</span>
+  </div>
+
+  <div>
+    <a class="btn ghost" href="#attractions">Attractions</a>
+    <button class="ghost" id="adminBtn">Admin</button>
+    <a class="btn ghost" href="https://wa.me/17786819140">WhatsApp</a>
+  </div>
+</header>
+
+<section class="hero" id="hero">
+  <div>
+    <div style="color:var(--gold);font-weight:950;letter-spacing:.08em">
+      EXPLORE. EXPERIENCE. REMEMBER.
+    </div>
+
+    <h1>Vancouver Peaks Journey</h1>
+
+    <p>
+      Discover Vancouver’s most beautiful attractions with a premium private experience.
+    </p>
+
+    <a class="btn" href="#attractions">Choose Your Adventure</a>
+  </div>
+</section>
+
+<main class="wrap">
+
+<section id="attractions">
+
+  <div class="title">
+    <div style="color:var(--gold);font-size:30px">⛰</div>
+    <h2>Choose Your Peak Experience</h2>
+    <p>Select your attraction first. Booking details, pickup location, promo code, and gift card will be entered on the tour page.</p>
+  </div>
+
+  <div class="cards">
+
+    <article class="card">
+      <div class="badge">MOST POPULAR</div>
+      <div class="photo" id="imgSea"></div>
+
+      <div class="body">
+        <h3>Sea to Sky Gondola</h3>
+
+        <p class="desc">
+          Panoramic mountain, ocean, and sky views with suspension bridge and photo moments.
+        </p>
+
+        <ul class="features">
+          <li>Gondola Ride</li>
+          <li>Sky Pilot Suspension Bridge</li>
+          <li>Scenic Viewpoints</li>
+          <li>4–5 Hours Experience</li>
+        </ul>
+
+        <div class="price-row">
+          <div class="price">From $150/person</div>
+          <button onclick="location.href='sea-to-sky.html'">View Tour</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="photo" id="imgGrouse"></div>
+
+      <div class="body">
+        <h3>Grouse Mountain</h3>
+
+        <p class="desc">
+          Mountain experience with city, ocean, forest, and sunset views.
+        </p>
+
+        <ul class="features">
+          <li>Grouse Gondola</li>
+          <li>Mountain Viewpoints</li>
+          <li>Photo Stops</li>
+          <li>3–4 Hours Experience</li>
+        </ul>
+
+        <div class="price-row">
+          <div class="price">From $100/person</div>
+          <button onclick="location.href='grouse.html'">View Tour</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="photo" id="imgWhistler"></div>
+
+      <div class="body">
+        <h3>Whistler Adventure</h3>
+
+        <p class="desc">
+          Whistler Village, scenic stops, free time, and optional Sea to Sky add-on.
+        </p>
+
+        <ul class="features">
+          <li>Whistler Village</li>
+          <li>Scenic Stops</li>
+          <li>Free Time</li>
+          <li>6–7 Hours Experience</li>
+        </ul>
+
+        <div class="addon-card">
+          <div>Optional Sea to Sky Add-on</div>
+          <div>Available</div>
+        </div>
+
+        <div class="price-row">
+          <div class="price">From $190/person</div>
+          <button onclick="location.href='whistler.html'">View Tour</button>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section id="reviews" style="margin-top:60px;">
+  <div class="title">
+    <div style="color:var(--gold);font-size:30px">⭐</div>
+    <h2>Guest Reviews</h2>
+    <p>What our guests say about Vancouver Peaks Journey.</p>
+  </div>
+
+  <div id="leadersBox" class="cards">
+    <p class="desc">Loading tour leader ratings...</p>
+  </div>
+
+  <br><br>
+
+  <div id="reviewsBox" class="cards">
+    <p class="desc">Loading reviews...</p>
+  </div>
+</section>
+
+<section id="trust" style="margin-top:60px;">
+  <div class="title">
+    <div style="color:var(--gold);font-size:30px">★</div>
+    <h2>Private, Comfortable, Memorable</h2>
+    <p>Designed for visitors who want a smooth Vancouver experience without crowded bus tours.</p>
+  </div>
+
+  <div class="cards">
+    <article class="card">
+      <div class="body">
+        <h3>Premium Private Experience</h3>
+        <p class="desc">Comfortable pickup, flexible timing, and a personal tour experience for couples, families, and small groups.</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Scenic Photo Moments</h3>
+        <p class="desc">Beautiful mountain, ocean, forest, and city viewpoints selected for memorable photos and relaxed sightseeing.</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Easy Booking</h3>
+        <p class="desc">Choose your tour, select your date and pickup location, and confirm your experience online.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="faq" style="margin-top:60px;">
+  <div class="title">
+    <div style="color:var(--gold);font-size:30px">❓</div>
+    <h2>Frequently Asked Questions</h2>
+    <p>Quick answers before booking your Vancouver experience.</p>
+  </div>
+
+  <div class="cards">
+    <article class="card">
+      <div class="body">
+        <h3>Is pickup included?</h3>
+        <p class="desc">Yes. Pickup is available from hotels, cruise terminals, and selected Vancouver locations.</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Are the tours private?</h3>
+        <p class="desc">Yes. Experiences are designed for couples, families, and small private groups.</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Can I book for multiple guests?</h3>
+        <p class="desc">Yes. Current booking options support 2, 3, or 4 guests with group discounts.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="contact" style="margin-top:60px;">
+  <div class="title">
+    <div style="color:var(--gold);font-size:30px">✦</div>
+    <h2>Before You Book</h2>
+    <p>Contact us for custom timing, cruise pickup coordination, or special requests.</p>
+  </div>
+
+  <div class="cards">
+    <article class="card">
+      <div class="body">
+        <h3>Private Experience</h3>
+        <p class="desc">Flexible timing, premium comfort, and a relaxed sightseeing experience without crowded buses.</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>WhatsApp Support</h3>
+        <p class="desc">Questions before booking? Contact us directly on WhatsApp for quick assistance.</p>
+
+        <a class="btn" style="margin-top:12px;" href="https://wa.me/17786819140">
+          Chat On WhatsApp
+        </a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="body">
+        <h3>Custom Requests</h3>
+        <p class="desc">Need airport pickup, cruise coordination, photography stops, or a custom schedule? We can help.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="admin" id="adminPanel">
+  <h2>Admin Dashboard</h2>
+  <p>Password is set in Vercel environment variable.</p>
+
+  <div class="admin-grid">
+    <div class="admin-box">
+      <h3>Change Prices</h3>
+
+      <label>Sea<input id="adminSea" type="number"></label>
+      <label>Grouse<input id="adminGrouse" type="number"></label>
+      <label>Whistler<input id="adminWhistler" type="number"></label>
+      <label>Add-on<input id="adminAddon" type="number"></label>
+
+      <br>
+      <button id="savePricesBtn">Save Prices</button>
+    </div>
+
+    <div class="admin-box">
+      <h3>Upload Photos</h3>
+
+      <label>Hero<input id="heroFile" type="file" accept="image/*"></label>
+      <label>Sea<input id="seaFile" type="file" accept="image/*"></label>
+      <label>Grouse<input id="grouseFile" type="file" accept="image/*"></label>
+      <label>Whistler<input id="whistlerFile" type="file" accept="image/*"></label>
+
+      <br>
+      <button id="uploadImagesBtn">Upload Selected Images</button>
+    </div>
+
+    <div class="admin-box">
+      <h3>Orders</h3>
+      <label>Filter Date<input id="filterDate" type="date"></label>
+
+      <br>
+      <button id="refreshOrdersBtn">Refresh Orders</button>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ticket</th>
+        <th>Tour</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+
+    <tbody id="ordersBody"></tbody>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  <div><b>Vancouver Peaks Journey</b></div>
+  <a style="color:white" href="https://wa.me/17786819140">WhatsApp: 778 681 9140</a>
+</footer>
+
+<script src="app.js"></script>
+<script src="payment.js"></script>
+<script src="pricing.js"></script>
+<script src="reviews.js?v=1"></script>
+
+</body>
+</html>
