@@ -59,6 +59,35 @@ async function loadReviews() {
       }))
       .sort((a, b) => b.avg - a.avg);
 
+    const totalReviews = reviews.length;
+
+const averageRating =
+(
+  reviews.reduce((sum, r) => sum + Number(r.rating), 0)
+  / totalReviews
+).toFixed(1);
+
+const reviewsSection =
+  document.getElementById("reviews");
+
+if (reviewsSection) {
+
+  const title =
+    reviewsSection.querySelector("h2");
+
+  const subtitle =
+    reviewsSection.querySelector("p");
+
+  if (title) {
+    title.innerHTML =
+      `⭐ ${averageRating}/5 Average Rating`;
+  }
+
+  if (subtitle) {
+    subtitle.innerHTML =
+      `Based on ${totalReviews} Guest Reviews`;
+  }
+}
     leadersBox.innerHTML = leaders.map((leader, index) => {
       const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "⭐";
 
