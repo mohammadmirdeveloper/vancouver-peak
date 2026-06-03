@@ -223,6 +223,21 @@ document.addEventListener("DOMContentLoaded", () => {
       <div id="reviewsBox" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
         Loading reviews...
       </div>
+      
+      <div style="text-align:center;margin-top:35px;">
+  <a href="/review.html"
+    style="
+      display:inline-block;
+      padding:14px 24px;
+      background:#071d35;
+      color:white;
+      text-decoration:none;
+      border-radius:12px;
+      font-weight:800;
+    ">
+    Write a Review
+  </a>
+</div>
     </section>
 
     <section id="adminPanel" style="display:none;padding:35px 8%;background:#071d35;color:white;"></section>
